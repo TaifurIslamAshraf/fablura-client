@@ -25,10 +25,10 @@ const cartApi = apiSlice.injectEndpoints({
     }),
 
     addToCart: build.mutation({
-      query: ({ productId }) => ({
+      query: ({ productId, colors, size }) => ({
         url: "/cart/add-to-cart",
         method: "POST",
-        body: { productId },
+        body: { productId, colors, size },
         credentials: "include",
       }),
       invalidatesTags: ["Cart"] as any,

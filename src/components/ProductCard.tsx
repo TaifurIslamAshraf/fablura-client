@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import AddToCart from "./AddToCart";
 import Ratings from "./Ratings";
+import { CartDialog } from "./CartDialog";
 
 type Props = {
   product: any;
@@ -44,7 +45,7 @@ const ProductCard = async ({ product }: Props) => {
         </h3>
       </div>
 
-      <AddToCart btnFull="w-auto" product={product} />
+      <CartDialog btnFull="w-full" product={product} />
     </div>
   );
 };

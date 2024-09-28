@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { LoadingButton } from "./LoaderButton";
 import { Button } from "./ui/button";
+import { CartDialog } from "./CartDialog";
 
 interface Product {
   name: string;
@@ -28,7 +29,7 @@ const AddToCart = ({ product, btnFull }: { product: any; btnFull: string }) => {
     useAddToCartMutation();
   const handleClick = async () => {
     if (product?.stock > 0) {
-      await addToCart({ productId: product._id });
+      await addToCart({ productId: product._id,  });
       await refetch();
       await totalPriceRefetch();
     } else {
@@ -50,13 +51,15 @@ const AddToCart = ({ product, btnFull }: { product: any; btnFull: string }) => {
       {isLoading ? (
         <LoadingButton className={btnFull} />
       ) : (
-        <Button
-          disabled={product?.stock <= 0}
-          className="hover:bg-[#000000a2] transition-all"
-          onClick={handleClick}
-        >
-          Add To Cart
-        </Button>
+        // <Button
+        //   disabled={product?.stock <= 0}
+        //   className="hover:bg-[#000000a2] transition-all"
+        //   onClick={handleClick}
+        // >
+        //   Add To Cart
+        // </Button>
+
+        <CartDialog />
       )}
     </>
   );
