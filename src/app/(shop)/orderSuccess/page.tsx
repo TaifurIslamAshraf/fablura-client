@@ -11,7 +11,7 @@ const SuccessOrder = () => {
         alt="Order Success"
       />
 
-      <h1 className="text-2xl font-semibold">
+      <h1 className="text-lg md:text-2xl font-semibold">
         Your order successfully placed.
       </h1>
 

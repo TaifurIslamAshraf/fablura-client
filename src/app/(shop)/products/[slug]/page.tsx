@@ -1,7 +1,8 @@
 import { styles } from "@/app/styles";
-import AddToCart from "@/components/AddToCart";
 import BuyNow from "@/components/BuyNow";
 import Cart from "@/components/Cart";
+import { CartDialog } from "@/components/CartDialog";
+import ColorsAndSize from "@/components/ColorsAndSize";
 import ElectronicDesc from "@/components/ElectronicDesc";
 import FoodDesc from "@/components/FoodDesc";
 import ProductCarousel from "@/components/ProductSlider";
@@ -24,6 +25,7 @@ const page: FC<Props> = async ({ params }) => {
   const { slug } = params;
   const product = await singleProduct(slug);
   const productInfo = product?.product;
+ 
 
   // lg:mt-[140px] mt-[70px]
   return (
@@ -62,40 +64,6 @@ const page: FC<Props> = async ({ params }) => {
               </Link>
             </h1>
 
-            {productInfo?.description?.brand ? (
-              <div className="space-y-1">
-                <h1>
-                  <span className="font-[500]">Brand:</span>{" "}
-                  {productInfo?.description?.brand}
-                </h1>
-                <ul className="list-inside list-disc">
-                  <h1 className="font-[500]">Highilight:</h1>
-                  <li>
-                    Warranty Period:{" "}
-                    <span className="font-[500]">
-                      {productInfo?.description?.warrantyPeriod}
-                    </span>
-                  </li>
-                  <li>
-                    Colour:{" "}
-                    <span className="font-[500]">
-                      {" "}
-                      {productInfo?.description?.colors}
-                    </span>
-                  </li>
-                  <li>
-                    Country Origin:{" "}
-                    <span className="font-[500]">
-                      {" "}
-                      {productInfo?.description?.countryOrigin}
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            ) : (
-              ""
-            )}
-
             <div className="space-y-2">
               {productInfo?.stock > 0 ? (
                 <div className="flex items-center gap-2 font-[500] text-lg">
@@ -113,10 +81,8 @@ const page: FC<Props> = async ({ params }) => {
                 </div>
               )}
             </div>
-            <div className="gap-4 flex flex-col">
-              <AddToCart btnFull="w-auto" product={productInfo} />
-              <BuyNow product={productInfo} />
-            </div>
+           <ColorsAndSize product={productInfo} />
+         
             <div className="text-xs space-y-2 pt-3">
               <h2 className="flex items-center gap-2">
                 <RefreshCcw /> <span>7 Days Replacement Policy</span>
@@ -138,16 +104,6 @@ const page: FC<Props> = async ({ params }) => {
         </div>
       </div>
 
-      <div className={cn("bg-primary-foreground my-4 lg:mx-6 mx-0 py-4")}>
-        {productInfo?.descriptionType === "electronics" ? (
-          <ElectronicDesc
-            description={productInfo?.description}
-            title={productInfo?.name}
-          />
-        ) : (
-          <FoodDesc description={productInfo?.description} />
-        )}
-      </div>
 
       <div className="bg-primary-foreground my-4 lg:mx-6 mx-0 py-4">
         <Reviews

@@ -11,6 +11,15 @@ import {
   useSyncCartMutation,
   useTotalPriceQuery,
 } from "@/redux/features/cart/cartApi";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import { deleteCartItem } from "@/redux/features/cart/cartSlice";
 import { ArrowRight, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -21,13 +30,15 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 
 const CartPage = () => {
-  const [syncCart, {}] = useSyncCartMutation();
+  const [syncCart, { error, isError }] = useSyncCartMutation();
   const { isLoading, isSuccess, refetch } = useGetCartItemQuery({});
   const { refetch: totalPriceRefetch } = useTotalPriceQuery({});
   const { user } = useSelector((state: any) => state.auth);
   const { allCartProducts, totalPrice } = useSelector(
     (state: any) => state.cart
   );
+
+ 
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -45,6 +56,7 @@ const CartPage = () => {
       prev?.map((item) => ({ ...item, selected: e.target.checked }))
     );
 
+
     await syncCart({ isSelectAll: e.target.checked });
     setIsLoadingFetch(false);
 
@@ -54,12 +66,12 @@ const CartPage = () => {
 
   //handle toggol product
   const handleSingleSelect = async (
-    productId: string,
+    cartItemId: string,
     e: ChangeEvent<HTMLInputElement>
   ) => {
     setToggleProduct((prev) =>
       prev?.map((item) =>
-        item?.productId === productId
+        item?.cartItemId === cartItemId
           ? { ...item, selected: e.target.checked }
           : item
       )
@@ -68,38 +80,38 @@ const CartPage = () => {
     const isAllSelected = toggleProduct.every((item) => item.selected);
     setSelectAll(isAllSelected);
 
-    await syncCart({ isSelect: e.target.checked, productId });
+    await syncCart({ isSelect: e.target.checked, cartItemId });
     await refetch();
     await totalPriceRefetch();
   };
 
   //update product quantity and update price
   const handleQuantityDecrement = async (
-    productId: string,
+    cartItemId: string,
     quantity: number
   ) => {
     setIsLoadingFetch(true);
-    await syncCart({ productId, cartQuantity: quantity - 1 });
+    await syncCart({ cartItemId, cartQuantity: quantity - 1 });
     setIsLoadingFetch(false);
     await refetch();
     await totalPriceRefetch();
   };
   const handleQuantityIncrement = async (
-    productId: string,
+    cartItemId: string,
     quantity: number
   ) => {
     setIsLoadingFetch(true);
-    await syncCart({ productId, cartQuantity: quantity + 1 });
+    await syncCart({ cartItemId, cartQuantity: quantity + 1 });
     setIsLoadingFetch(false);
     await refetch();
     await totalPriceRefetch();
   };
 
   //handle delete product from cart
-  const handleDeleteProduct = async (productId: string) => {
+  const handleDeleteProduct = async (cartItemId: string) => {
     setIsLoadingFetch(true);
-    await syncCart({ productId, deleteCartItem: "true" });
-    dispatch(deleteCartItem({ productId }));
+    await syncCart({ cartItemId, deleteCartItem: "true" });
+    dispatch(deleteCartItem({ cartItemId }));
     setIsLoadingFetch(false);
     await refetch();
     await totalPriceRefetch();
@@ -115,13 +127,30 @@ const CartPage = () => {
     }
   };
 
+  //size change
+  const handleSizeChange = async (cartId: string, value:string) => {
+    setIsLoadingFetch(true);
+    await syncCart({ cartItemId: cartId, size: value });
+    await refetch();
+    setIsLoadingFetch(false);
+  }
+
+  //colors change
+  const handleColorsChange = async (cartId: string, value:string) => {
+    setIsLoadingFetch(true);
+    await syncCart({ cartItemId: cartId, colors: value });
+    await refetch();
+    setIsLoadingFetch(false);
+  }
+
   //side effects
+
 
   useEffect(() => {
     const initialToggleProduct =
       allCartProducts?.cartItem?.map((item: any) => ({
         selected: item.selected,
-        productId: item.productId,
+        cartItemId: item._id,
       })) || [];
     setToggleProduct(initialToggleProduct);
   }, [allCartProducts]);
@@ -129,6 +158,13 @@ const CartPage = () => {
   useEffect(() => {
     setSelectAll(allCartProducts?.selectAll);
   }, [allCartProducts?.selectAll]);
+
+  useEffect(() => {
+   if(isError){
+    const errorMessage = error as any
+    toast.error(errorMessage?.data?.message)
+   }
+  }, [error, isError]);
 
   //for handle hidretion errro
   useEffect(() => {
@@ -148,7 +184,7 @@ const CartPage = () => {
         <>
           {allCartProducts?.cartItem?.length > 0 ? (
             <div className={cn(styles.paddingX, "")}>
-              <div className="lg:flex justify-between max-w-[1200px] w-full mx-auto gap-6 md:p-4 p-0 block">
+              <div className="lg:flex justify-between w-full mx-auto gap-6 md:p-4 p-0 block">
                 <div className="w-full">
                   <div className="flex flex-col-reverse gap-6 md:flex-row items-center justify-between bg-primary-foreground md:p-4 py-3 px-2 shadow-sm">
                     <div className="flex items-start gap-2">
@@ -183,18 +219,18 @@ const CartPage = () => {
                               )}
                               key={product.productId}
                             >
-                              <div className="basis-[60%] mb-6 md:mb-0 flex justify-start items-center gap-4">
+                              <div className="basis-[50%] mb-6 md:mb-0 flex justify-start items-center gap-4">
                                 <input
                                   name="items"
                                   type="checkbox"
                                   checked={
                                     toggleProduct?.find(
                                       (item) =>
-                                        item?.productId === product?.productId
+                                        item?.cartItemId === product?._id
                                     )?.selected || false
                                   }
                                   onChange={(e) =>
-                                    handleSingleSelect(product?.productId, e)
+                                    handleSingleSelect(product?._id, e)
                                   }
                                 />
                                 <div className="flex flex-grow justify-start gap-4">
@@ -217,7 +253,7 @@ const CartPage = () => {
                                     </h1>
                                     <Button
                                       onClick={() =>
-                                        handleDeleteProduct(product?.productId)
+                                        handleDeleteProduct(product?._id)
                                       }
                                       className="hover:bg-red-300"
                                       variant={"link"}
@@ -229,51 +265,111 @@ const CartPage = () => {
                                 </div>
                               </div>
 
-                              <div className="basis-[40%] flex md:justify-between md:gap-0 justify-center gap-10">
-                                <div className="flex items-center justify-center">
-                                  <button
-                                    className={cn(
-                                      product?.quantity <= 1
-                                        ? "cursor-not-allowed"
-                                        : "",
-                                      "px-2 text-center font-semibold border-gray-300 border bg-gray-200"
-                                    )}
-                                    onClick={() =>
-                                      handleQuantityDecrement(
-                                        product?.productId,
-                                        product.quantity
-                                      )
-                                    }
-                                    disabled={product?.quantity <= 1}
-                                  >
-                                    -
-                                  </button>
-                                  <input
-                                    className="w-[35px] px-1 text-center border-gray-300 border outline-none"
-                                    disabled
-                                    value={product?.quantity}
-                                    type="number"
-                                    name="quantity"
-                                  />
-                                  <button
-                                    className="px-2 text-center border-gray-300 border bg-gray-200"
-                                    onClick={() =>
-                                      handleQuantityIncrement(
-                                        product?.productId,
-                                        product.quantity
-                                      )
-                                    }
-                                  >
-                                    +
-                                  </button>
+                              <div className="basis-[50%] block md:flex md:justify-between md:gap-0 items-center justify-center gap-10">
+
+                                <div className="flex flex-col gap-3">
+
+                            
+                                  <Select onValueChange={(value) => handleSizeChange(product?._id, value)} defaultValue={product?.size}>
+                                    <SelectTrigger className="w-full md:min-w-[140px]">
+                                      <SelectValue placeholder="Select Size" />
+                                    </SelectTrigger>
+                                    <SelectContent className="w-full md:min-w-[140px]">
+
+
+                                      {product?.product?.size
+                                        ?.filter((item: any) => item?.available === true).map((filterItem: any, index: number) => (
+                                          <SelectItem key={index} value={filterItem?.name}>
+                                            {filterItem?.name}
+                                          </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                  </Select>
+
+                                  
+                                  <Select onValueChange={(value) => handleColorsChange(product?._id, value)} defaultValue={product?.colors}>
+                                    <SelectTrigger className="w-full md:min-w-[140px]">
+                                      <SelectValue placeholder="Select Color" />
+                                    </SelectTrigger>
+                                    <SelectContent className="w-full md:min-w-[140px]">
+
+
+                                      {product?.product?.colors
+                                        ?.filter((item: any) => item?.stock === true).map((filterItem: any, index: number) => (
+                                          <SelectItem key={index} value={filterItem?.name}>
+                                            {filterItem?.name}
+                                          </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                  </Select>
+
+                                  {/* <select onChange={(e) => handleSizeChange(product?._id, e)} name="size" id="size" aria-placeholder="select size" className="">
+                                    <option defaultValue={product?.size} value="">Size: <span className="font-bold text-green-300">{product?.size}</span></option>
+                                    {product?.product?.size
+                                      ?.filter((item: any) => item?.available === true).map((filterItem: any, index: number) => (
+                                        <option key={index} value={filterItem?.name}>
+                                          {filterItem?.name}
+                                        </option>
+                                      ))}
+                                  </select>
+
+                                  <select onChange={(e) => handleColorsChange(product?._id, e)} name="colors" id="colors" aria-placeholder="select colors" className="">
+                                    <option defaultValue={product?.colors} value="">Colors: <span className="font-bold text-green-300">{product?.colors}</span></option>
+                                    {product?.product?.colors
+                                      ?.filter((item: any) => item?.stock === true).map((filterItem: any, index: number) => (
+                                        <option key={index} value={filterItem?.name}>
+                                          {filterItem?.name}
+                                        </option>
+                                      ))}
+                                  </select> */}
                                 </div>
-                                <div className="">
-                                  <h1 className="font-semibold">
-                                    {product?.discountPrice} TK.
-                                  </h1>
-                                  <p className="line-through">
-                                    {product?.price} TK.
-                                  </p>
+
+                                <div className="flex items-center justify-between md:pt-0 pt-6 gap-10">
+                                  <div className="flex items-center justify-center">
+                                    <button
+                                      className={cn(
+                                        product?.quantity <= 1
+                                          ? "cursor-not-allowed"
+                                          : "",
+                                        "px-2 text-center font-semibold border-gray-300 border bg-gray-200"
+                                      )}
+                                      onClick={() =>
+                                        handleQuantityDecrement(
+                                          product?._id,
+                                          product.quantity
+                                        )
+                                      }
+                                      disabled={product?.quantity <= 1}
+                                    >
+                                      -
+                                    </button>
+                                    <input
+                                      className="w-[35px] px-1 text-center border-gray-300 border outline-none"
+                                      disabled
+                                      value={product?.quantity}
+                                      type="number"
+                                      name="quantity"
+                                    />
+                                    <button
+                                      className="px-2 text-center border-gray-300 border bg-gray-200"
+                                      onClick={() =>
+                                        handleQuantityIncrement(
+                                          product?._id,
+                                          product.quantity
+                                        )
+                                      }
+                                    >
+                                      +
+                                    </button>
+                                  </div>
+                                  <div className="">
+                                    <h1 className="font-semibold">
+                                      {product?.discountPrice} TK.
+                                    </h1>
+                                    <p className="line-through">
+                                      {product?.price} TK.
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -293,6 +389,7 @@ const CartPage = () => {
                     </Button>
                   </div>
                 </div>
+
                 <div className="basis-1/3 h-[230px] bg-primary-foreground p-4">
                   <div className="flex items-center gap-3 space-y-5">
                     <Image

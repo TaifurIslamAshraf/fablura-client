@@ -27,9 +27,9 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    deleteCartItem: (state, action: PayloadAction<{ productId: string }>) => {
+    deleteCartItem: (state, action: PayloadAction<{ cartItemId: string }>) => {
       state.allCartProducts.cartItem = state.allCartProducts?.cartItem?.filter(
-        (item: any) => item.productId !== action.payload.productId
+        (item: any) => item._id !== action.payload.cartItemId
       );
     },
     clearCart: (state, action) => {

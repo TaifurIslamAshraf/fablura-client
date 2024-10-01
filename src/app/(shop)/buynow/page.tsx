@@ -59,6 +59,8 @@ const ByNowCheckout = () => {
       quantity: buyNowItem?.quantity,
       image: buyNowItem?.image,
       product: buyNowItem?.product,
+      colors: buyNowItem?.colors,
+      size: buyNowItem?.size,
     },
   ];
 

@@ -6,19 +6,23 @@ const cartApi = apiSlice.injectEndpoints({
     syncCart: build.mutation({
       query: ({
         isSelect,
-        productId,
+        cartItemId,
         isSelectAll,
         cartQuantity,
         deleteCartItem,
+        colors,
+        size
       }) => ({
         url: `/cart/cart-sync`,
         method: "POST",
         params: {
           isSelect,
-          productId,
+          cartItemId,
           isSelectAll,
           cartQuantity,
           deleteCartItem,
+          colors,
+          size
         },
         credentials: "include",
       }),
