@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertPopup } from "@/components/AlertPopup";
 import { Button } from "@/components/ui/button";
 import { customRevalidateTag } from "@/lib/actions/RevalidateTag";
 import { deleteCustomerReview } from "@/lib/fetch/customerReview";
@@ -24,13 +25,16 @@ const ReviewDeleteBtn: FC<Props> = ({ id }) => {
   };
 
   return (
-    <Button
+   <>
+   <AlertPopup actionFunc={() => handleCustomerReviewDelete(id)}>
+   <Button
       size={"icon"}
       className="bg-red-400"
-      onClick={() => handleCustomerReviewDelete(id)}
     >
       <Trash2 />
     </Button>
+   </AlertPopup>
+   </>
   );
 };
 

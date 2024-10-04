@@ -27,6 +27,7 @@ const productApi = apiSlice.injectEndpoints({
         method: "DELETE",
         credentials: "include",
       }),
+      
     }),
     updateProduct: build.mutation({
       query: ({ data }) => ({

@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertPopup } from "@/components/AlertPopup";
 import { Button } from "@/components/ui/button";
 import { customRevalidateTag } from "@/lib/actions/RevalidateTag";
 import { useDeleteBannerMutation } from "@/redux/features/banners/bannerApi";
@@ -33,14 +34,17 @@ const BannerDeleteBtn: FC<Props> = ({ id }) => {
   }, [error, isSuccess]);
 
   return (
-    <Button
+   <>
+   <AlertPopup actionFunc={() => handleCustomerReviewDelete(id)}>
+   <Button
       disabled={isLoading}
       size={"icon"}
       className="bg-red-400"
-      onClick={() => handleCustomerReviewDelete(id)}
     >
       <Trash2 />
     </Button>
+   </AlertPopup>
+   </>
   );
 };
 

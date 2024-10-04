@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertPopup } from "@/components/AlertPopup";
 import { Button } from "@/components/ui/button";
 import {
   useDeleteOrderMutation,
@@ -45,14 +46,15 @@ const OrderAction: FC<Props> = ({ id }) => {
           <Edit size={20} />
         </Button>
       </Link>
-      <Button
+     <AlertPopup actionFunc={() => handleDeleteOrder(id)}>
+     <Button
         disabled={isLoading}
         size={"icon"}
         variant={"outline"}
-        onClick={() => handleDeleteOrder(id)}
       >
         <Trash2 className="text-red-500" size={20} />
       </Button>
+     </AlertPopup>
     </div>
   );
 };

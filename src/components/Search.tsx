@@ -33,7 +33,7 @@ const Search: FC<Props> = ({ searchRoute, className }) => {
         value={name}
         required
       />
-      <Button onClick={handleSearch} variant={"outline"}>
+      <Button size={"icon"} onClick={handleSearch} variant={"outline"}>
         <SearchIcon />
       </Button>
     </div>

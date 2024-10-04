@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import ElectronicsDescForm from "@/app/(dashboard)/components/productForm/ElectronicsDescForm";
-import FoodsDescForm from "@/app/(dashboard)/components/productForm/FoodsDescForm";
+
 import ProductFormPreview from "@/app/(dashboard)/components/productForm/ProductFormPreview";
 import ProductFormStep from "@/app/(dashboard)/components/productForm/ProductFormStep";
 import ProductInfoForm from "@/app/(dashboard)/components/productForm/ProductInfoForm";
@@ -17,6 +16,7 @@ import { resetProductData } from "@/redux/features/product/productSlice";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
+import ProductDescForm from "@/app/(dashboard)/components/productForm/ProductDescForm";
 
 const CreateProduct = () => {
   const [formStep, setFormStep] = useState(0);
@@ -27,7 +27,7 @@ const CreateProduct = () => {
   const { productCreateData } = useSelector((state: any) => state.product);
   const [createProduct, { data, isSuccess, error, isLoading }] =
     useCreateProductMutation({});
-
+console.log("productCreateData", productCreateData.colors)
   const handleCreate = async () => {
     try {
       const formData = new FormData();
@@ -36,42 +36,13 @@ const CreateProduct = () => {
       formData.append("name", productCreateData.name);
       formData.append("category", productCreateData.category);
       formData.append("subcategory", productCreateData.subcategory);
-      formData.append("descriptionType", productCreateData.descriptionType);
       formData.append("price", productCreateData.price);
       formData.append("discountPrice", productCreateData.discountPrice);
       formData.append("stock", productCreateData.stock);
       formData.append("shipping", productCreateData.shipping);
-      if (productCreateData.descriptionType === "foods") {
-        formData.append("ingredients", productCreateData.ingredients);
-        formData.append("foodDesc", productCreateData.foodDesc);
-      } else if (productCreateData.descriptionType === "electronics") {
-        const {
-          colors,
-          brand,
-          warrantyPeriod,
-          batteryCapacity,
-          bodyMaterials,
-          chargingTime,
-          countryOrigin,
-          dimensions,
-          features,
-          model,
-          powerSupply,
-          waterproof,
-        } = productCreateData;
-        formData.append("colors", colors);
-        formData.append("brand", brand);
-        formData.append("warrantyPeriod", warrantyPeriod);
-        formData.append("batteryCapacity", batteryCapacity);
-        formData.append("bodyMaterials", bodyMaterials);
-        formData.append("chargingTime", chargingTime);
-        formData.append("countryOrigin", countryOrigin);
-        formData.append("dimensions", dimensions);
-        formData.append("features", features);
-        formData.append("model", model);
-        formData.append("powerSupply", powerSupply);
-        formData.append("waterproof", waterproof);
-      }
+      formData.append("description", productCreateData.description);
+      formData.append("colors", JSON.stringify(productCreateData.colors));
+    formData.append("size", JSON.stringify(productCreateData.size));
 
       // Append images
       localImages.forEach((image) => {
@@ -123,17 +94,11 @@ const CreateProduct = () => {
                 setFormStep={setFormStep}
               />
             )}
+       
             {formStep === 1 &&
-              productCreateData?.descriptionType === "electronics" && (
-                <ElectronicsDescForm
-                  formStep={formStep}
-                  setFormStep={setFormStep}
-                />
-              )}
-            {formStep === 1 &&
-              productCreateData?.descriptionType === "foods" && (
-                <FoodsDescForm formStep={formStep} setFormStep={setFormStep} />
-              )}
+              
+                <ProductDescForm formStep={formStep} setFormStep={setFormStep} />
+           }
 
             {formStep === 2 && <ProductFormPreview localImages={localImages} />}
 

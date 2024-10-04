@@ -32,11 +32,11 @@ const ProductFormStep: FC<Props> = ({ formStep, setFormStep }) => {
               "rounded-full bg-blue-500 p-1 w-8 h-8 text-center text-white"
             )}
           >
-            {formStep > 0 ? <Check /> : <h1>1</h1>}
+            {formStep > 0 ? <Check /> : <h5>1</h5>}
           </div>
           <div className="w-[200px] h-1 bg-primary"></div>
         </div>
-        <h1 className="absolute left-[-15%]">Product Info</h1>
+        <h5 className="absolute left-[-15%]">Product Info</h5>
       </div>
 
       <div className=" relative">
@@ -47,11 +47,11 @@ const ProductFormStep: FC<Props> = ({ formStep, setFormStep }) => {
               formStep < 1 ? "bg-gray-500" : "bg-blue-500"
             )}
           >
-            {formStep > 1 ? <Check /> : <h1>2</h1>}
+            {formStep > 1 ? <Check /> : <h5>2</h5>}
           </div>
           <div className="w-[200px] h-1 bg-primary"></div>
         </div>
-        <h1 className="absolute left-[-10%]">Description</h1>
+        <h5 className="absolute left-[-10%]">Description</h5>
       </div>
 
       <div className=" relative">
@@ -62,10 +62,10 @@ const ProductFormStep: FC<Props> = ({ formStep, setFormStep }) => {
               formStep < 2 ? "bg-gray-500" : "bg-blue-500"
             )}
           >
-            {formStep >= 2 ? <Check /> : <h1>3</h1>}
+            {formStep >= 2 ? <Check /> : <h5>3</h5>}
           </div>
         </div>
-        <h1 className="absolute left-[-50%]">Preview</h1>
+        <h5 className="absolute left-[-50%]">Preview</h5>
       </div>
     </div>
   );

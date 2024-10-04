@@ -82,6 +82,8 @@ const Checkout = () => {
       quantity: item?.quantity,
       image: item?.product?.image,
       product: item?.productId,
+      colors: item?.colors,
+      size: item?.size
     }));
 
     const data = {
@@ -125,7 +127,7 @@ const Checkout = () => {
       className={cn(
         styles.paddingX,
         styles.paddingY,
-        " max-w-[1200px] w-full mx-auto"
+        " w-full mx-auto"
       )}
     >
       <div className="">

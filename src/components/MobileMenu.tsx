@@ -24,7 +24,7 @@ const MobileMenu = () => {
     <div className="overflow-y-auto">
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline">
+          <Button size={"icon"} variant="outline">
             <Menu />
           </Button>
         </SheetTrigger>

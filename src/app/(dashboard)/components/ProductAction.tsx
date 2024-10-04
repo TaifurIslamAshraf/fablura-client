@@ -10,6 +10,7 @@ import { FilePenLine, Trash } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { IProduct } from "../../../../types/product";
+import { AlertPopup } from "@/components/AlertPopup";
 
 type Props = {
   product: IProduct;
@@ -21,15 +22,19 @@ const ProductAction: FC<Props> = ({ product }) => {
   const [deleteProduct, { isLoading, isSuccess, error }] =
     useDeleteProductMutation();
 
-  const handleDeleteProduct = async () => {
-    const productId = product?._id;
-    await deleteProduct({
-      productId: productId,
-    });
-
-    customRevalidateTag("getAllProducts");
-    router.refresh();
-  };
+    const handleDeleteProduct = async () => {
+      
+        const productId = product?._id;
+    
+        try {
+          await deleteProduct({productId});
+          await customRevalidateTag("getAllProducts");
+          router.refresh();
+        } catch (err) {
+          console.error("Failed to delete product:", err);
+          toast.error("Failed to delete product. Please try again.");
+        }
+    };
 
   useEffect(() => {
     if (isSuccess) {
@@ -50,14 +55,15 @@ const ProductAction: FC<Props> = ({ product }) => {
         </Link>
       </div>
       <div className="">
+        <AlertPopup actionFunc={handleDeleteProduct}>
         <Button
           disabled={isLoading}
-          onClick={handleDeleteProduct}
           size={"icon"}
           className="bg-red-400"
         >
           <Trash className="" />
         </Button>
+        </AlertPopup>
       </div>
     </div>
   );

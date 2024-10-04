@@ -34,6 +34,8 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import UpdateElectronicsDesc from "./UpdateElectronicsDesc";
 import UpdateFoodDesc from "./UpdateFoodDesc";
+import UpdateDescForm from "./UpdateDescForm";
+import AddColorsSize from "./AddColorsSize";
 
 type Props = {
   product: any;
@@ -53,59 +55,60 @@ const UpdateProductInfo: FC<Props> = ({ product }) => {
     useUpdateProductMutation();
 
   //conditionaliy add default value
-  const productDefaultDesc = () => {
-    if (product?.descriptionType === "foods") {
-      const { foodDesc, ingredients } = product?.description;
-      const foodDefaultDesc = {
-        foodDesc: foodDesc ? foodDesc : "",
-        ingredients: ingredients ? ingredients : "",
-      };
+  // const productDefaultDesc = () => {
+  //   if (product?.descriptionType === "foods") {
+  //     const { foodDesc, ingredients } = product?.description;
+  //     const foodDefaultDesc = {
+  //       foodDesc: foodDesc ? foodDesc : "",
+  //       ingredients: ingredients ? ingredients : "",
+  //     };
 
-      return foodDefaultDesc;
-    } else if (product?.descriptionType === "electronics") {
-      const {
-        colors,
-        brand,
-        warrantyPeriod,
-        batteryCapacity,
-        bodyMaterials,
-        chargingTime,
-        countryOrigin,
-        dimensions,
-        features,
-        model,
-        powerSupply,
-        waterproof,
-      } = product?.description;
-      const productDefauDesc = {
-        colors: colors ? colors : "",
-        brand: brand ? brand : "",
-        warrantyPeriod: warrantyPeriod ? warrantyPeriod : "",
-        batteryCapacity: batteryCapacity ? batteryCapacity : "",
-        bodyMaterials: bodyMaterials ? bodyMaterials : "",
-        chargingTime: chargingTime ? chargingTime : "",
-        countryOrigin: countryOrigin ? countryOrigin : "",
-        dimensions: dimensions ? dimensions : "",
-        features: features ? features : "",
-        model: model ? model : "",
-        powerSupply: powerSupply ? powerSupply : "",
-        waterproof: waterproof ? waterproof : "",
-      };
-      return productDefauDesc;
-    }
-  };
+  //     return foodDefaultDesc;
+  //   } else if (product?.descriptionType === "electronics") {
+  //     const {
+  //       colors,
+  //       brand,
+  //       warrantyPeriod,
+  //       batteryCapacity,
+  //       bodyMaterials,
+  //       chargingTime,
+  //       countryOrigin,
+  //       dimensions,
+  //       features,
+  //       model,
+  //       powerSupply,
+  //       waterproof,
+  //     } = product?.description;
+  //     const productDefauDesc = {
+  //       colors: colors ? colors : "",
+  //       brand: brand ? brand : "",
+  //       warrantyPeriod: warrantyPeriod ? warrantyPeriod : "",
+  //       batteryCapacity: batteryCapacity ? batteryCapacity : "",
+  //       bodyMaterials: bodyMaterials ? bodyMaterials : "",
+  //       chargingTime: chargingTime ? chargingTime : "",
+  //       countryOrigin: countryOrigin ? countryOrigin : "",
+  //       dimensions: dimensions ? dimensions : "",
+  //       features: features ? features : "",
+  //       model: model ? model : "",
+  //       powerSupply: powerSupply ? powerSupply : "",
+  //       waterproof: waterproof ? waterproof : "",
+  //     };
+  //     return productDefauDesc;
+  //   }
+  // };
 
   const form = useForm({
     defaultValues: {
-      name: product?.name ? product?.name : "",
-      price: product?.price ? product?.price?.toString() : "",
-      discountPrice: product?.discountPrice ? product?.discountPrice : "",
+      name: product?.name || "",
+      price: product?.price?.toString() || "",
+      discountPrice: product?.discountPrice?.toString() || "",
       shipping: product?.shipping === 0 ? "0" : product?.shipping?.toString(),
       stock: product?.stock === 0 ? "0" : product?.stock?.toString(),
-      descriptionType: product?.descriptionType ? product?.descriptionType : "",
-      category: product?.category?._id ? product?.category?._id : "",
-      subcategory: product?.subcategory?._id ? product?.subcategory?._id : "",
-      ...productDefaultDesc(),
+      description: product?.description || "",
+      category: product?.category?._id || "",
+      subcategory: product?.subcategory?._id || "",
+      colors: product?.colors || [],
+      size: product?.size || [],
     },
   });
 
@@ -113,69 +116,34 @@ const UpdateProductInfo: FC<Props> = ({ product }) => {
     try {
       const formData = new FormData();
 
-      // Append form data
       formData.append("id", product?._id);
-      formData.append("name", value?.name);
-      formData.append("category", value?.category);
-      formData.append("subcategory", value?.subcategory);
-      formData.append("descriptionType", value?.descriptionType);
-      formData.append("price", value?.price);
-      formData.append("discountPrice", value?.discountPrice);
-      formData.append("stock", value?.stock);
-      formData.append("shipping", value?.shipping);
-      if (value?.descriptionType === "foods") {
-        formData.append("ingredients", value?.ingredients);
-        formData.append("foodDesc", value?.foodDesc);
-      } else if (value?.descriptionType === "electronics") {
-        const {
-          colors,
-          brand,
-          warrantyPeriod,
-          batteryCapacity,
-          bodyMaterials,
-          chargingTime,
-          countryOrigin,
-          dimensions,
-          features,
-          model,
-          powerSupply,
-          waterproof,
-        } = value;
-        formData.append("colors", colors);
-        formData.append("brand", brand);
-        formData.append("warrantyPeriod", warrantyPeriod);
-        formData.append("batteryCapacity", batteryCapacity);
-        formData.append("bodyMaterials", bodyMaterials);
-        formData.append("chargingTime", chargingTime);
-        formData.append("countryOrigin", countryOrigin);
-        formData.append("dimensions", dimensions);
-        formData.append("features", features);
-        formData.append("model", model);
-        formData.append("powerSupply", powerSupply);
-        formData.append("waterproof", waterproof);
-      }
+      Object.keys(value).forEach((key) => {
+        if (key === "colors" || key === "size") {
+          formData.append(key, JSON.stringify(value[key]));
+        } else {
+          formData.append(key, value[key]);
+        }
+      });
 
       if (images?.length! > 0) {
         for (let i = 0; i < images?.length!; i++) {
-          const file = images![i];
-          formData.append("images", file);
+          formData.append("images", images![i]);
         }
       }
 
-      await updateProduct({
-        data: formData,
-      });
+      await updateProduct({ data: formData });
 
-      customRevalidateTag("getAllProducts");
-      await refetch();
-      await totalPriceRefetch();
+      await Promise.all([
+        customRevalidateTag("getAllProducts"),
+        refetch(),
+        totalPriceRefetch(),
+      ]);
+
       router.refresh();
     } catch (error) {
-      // Handle errors
-      console.error("Error creating product:", error);
+      console.error("Error updating product:", error);
     }
   };
-
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
 
@@ -358,6 +326,8 @@ const UpdateProductInfo: FC<Props> = ({ product }) => {
               )}
             />
 
+            <AddColorsSize form={form} />
+
             <div className="">
               <FormLabel>Product Images</FormLabel>
               <Input
@@ -371,12 +341,7 @@ const UpdateProductInfo: FC<Props> = ({ product }) => {
           </div>
           <div className="space-y-5">
             <h1 className="text-xl font-semibold"> Description</h1>
-            {form?.watch("descriptionType") === "foods" && (
-              <UpdateFoodDesc form={form} />
-            )}
-            {form?.watch("descriptionType") === "electronics" && (
-              <UpdateElectronicsDesc form={form} />
-            )}
+            <UpdateDescForm form={form} />
           </div>
 
           <div className="flex items-center justify-end">

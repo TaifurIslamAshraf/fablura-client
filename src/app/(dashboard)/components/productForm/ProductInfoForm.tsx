@@ -21,11 +21,12 @@ import { ProductSchema } from "@/lib/formSchema/productSchema";
 import { useGetAllCategoryQuery } from "@/redux/features/category/categoryApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChangeEvent, Dispatch, FC, SetStateAction, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { z } from "zod";
 
 import { creactProductData } from "@/redux/features/product/productSlice";
+import AddColorsSize from "./AddColorsSize";
 
 interface Props {
   formStep: number;
@@ -51,11 +52,12 @@ const ProductInfoForm: FC<Props> = ({
       name: "",
       category: "",
       subcategory: "",
-      descriptionType: "",
       price: "",
       discountPrice: "",
       stock: "",
       shipping: "",
+      colors: [],
+      size: [],
     },
   });
 
@@ -240,31 +242,7 @@ const ProductInfoForm: FC<Props> = ({
             )}
           />
 
-          <FormField
-            name="descriptionType"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Product Description" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="electronics">Electronics</SelectItem>
-                    <SelectItem value="foods">Foods</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
+          <AddColorsSize form={form} />
           <div className="">
             <FormLabel>Product Image</FormLabel>
             <Input

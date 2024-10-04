@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import { ICategory, ISubcategory } from "../../../../../types/category";
 import CreateCategory from "../../components/CreateCategory";
 import CreateSubategory from "../../components/CreateSubcategory";
+import { AlertPopup } from "@/components/AlertPopup";
 
 const CategorySubcategory = () => {
   const [subcategory, setSubcategory] = useState<ISubcategory | undefined>();
@@ -99,13 +100,14 @@ const CategorySubcategory = () => {
                 >
                   <div className="flex items-center justify-between">
                     <span>{item?.name}</span>
-                    <button
+                   <AlertPopup actionFunc={() => handleDeleteCategory(item?._id)}>
+                   <button
                       disabled={categoryIsLoading}
-                      onClick={() => handleDeleteCategory(item?._id)}
                       className="group-hover:block hidden rounded bg-gray-50 p-1"
                     >
                       <Trash2 className="text-red-400" size={20} />
                     </button>
+                   </AlertPopup>
                   </div>
                 </li>
               );
@@ -122,12 +124,13 @@ const CategorySubcategory = () => {
                     >
                       <div className="flex items-center justify-between">
                         <span>{subItem?.name}</span>
+                        <AlertPopup actionFunc={() => handleDeletesubCategory(subItem?._id)}>
                         <button
-                          onClick={() => handleDeletesubCategory(subItem?._id)}
                           className="group-hover:block hidden rounded bg-gray-50 p-1"
                         >
                           <Trash2 className="text-red-400" size={20} />
                         </button>
+                        </AlertPopup>
                       </div>
                     </li>
                   ))}
