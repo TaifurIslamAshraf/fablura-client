@@ -15,7 +15,7 @@ const nextConfig = {
       },
     images:{
         remotePatterns:[{
-            hostname: "server.varimartbd.com"
+            hostname: "server.fablura.com"
         }, {hostname: "localhost"}]
     },
    
