@@ -32,10 +32,13 @@ import { useUpdateProductMutation } from "@/redux/features/product/productApi";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import UpdateElectronicsDesc from "./UpdateElectronicsDesc";
-import UpdateFoodDesc from "./UpdateFoodDesc";
-import UpdateDescForm from "./UpdateDescForm";
+
 import AddColorsSize from "./AddColorsSize";
+import dynamic from "next/dynamic";
+
+const UpdateDescForm = dynamic(() => import("./UpdateDescForm"), {
+  ssr: false,
+});
 
 type Props = {
   product: any;
@@ -53,49 +56,6 @@ const UpdateProductInfo: FC<Props> = ({ product }) => {
   const dispatch = useDispatch();
   const [updateProduct, { isLoading, error, isSuccess }] =
     useUpdateProductMutation();
-
-  //conditionaliy add default value
-  // const productDefaultDesc = () => {
-  //   if (product?.descriptionType === "foods") {
-  //     const { foodDesc, ingredients } = product?.description;
-  //     const foodDefaultDesc = {
-  //       foodDesc: foodDesc ? foodDesc : "",
-  //       ingredients: ingredients ? ingredients : "",
-  //     };
-
-  //     return foodDefaultDesc;
-  //   } else if (product?.descriptionType === "electronics") {
-  //     const {
-  //       colors,
-  //       brand,
-  //       warrantyPeriod,
-  //       batteryCapacity,
-  //       bodyMaterials,
-  //       chargingTime,
-  //       countryOrigin,
-  //       dimensions,
-  //       features,
-  //       model,
-  //       powerSupply,
-  //       waterproof,
-  //     } = product?.description;
-  //     const productDefauDesc = {
-  //       colors: colors ? colors : "",
-  //       brand: brand ? brand : "",
-  //       warrantyPeriod: warrantyPeriod ? warrantyPeriod : "",
-  //       batteryCapacity: batteryCapacity ? batteryCapacity : "",
-  //       bodyMaterials: bodyMaterials ? bodyMaterials : "",
-  //       chargingTime: chargingTime ? chargingTime : "",
-  //       countryOrigin: countryOrigin ? countryOrigin : "",
-  //       dimensions: dimensions ? dimensions : "",
-  //       features: features ? features : "",
-  //       model: model ? model : "",
-  //       powerSupply: powerSupply ? powerSupply : "",
-  //       waterproof: waterproof ? waterproof : "",
-  //     };
-  //     return productDefauDesc;
-  //   }
-  // };
 
   const form = useForm({
     defaultValues: {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 
 import ProductFormPreview from "@/app/(dashboard)/components/productForm/ProductFormPreview";
 import ProductFormStep from "@/app/(dashboard)/components/productForm/ProductFormStep";
@@ -15,7 +16,11 @@ import { resetProductData } from "@/redux/features/product/productSlice";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import ProductDescForm from "@/app/(dashboard)/components/productForm/ProductDescForm";
+// import ProductDescForm from "@/app/(dashboard)/components/productForm/ProductDescForm";
+const ProductDescForm = dynamic(
+  () => import("@/app/(dashboard)/components/productForm/ProductDescForm"),
+  { ssr: false }
+);
 
 const CreateProduct = () => {
   const [formStep, setFormStep] = useState(0);
