@@ -13,7 +13,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Varimartbd",
+  title: "Fablura",
   description: descriptionShop,
   keywords: allkeywords,
 };
