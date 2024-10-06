@@ -85,7 +85,7 @@ const orderApi = apiSlice.injectEndpoints({
         method: "DELETE",
         credentials: "include",
       }),
-      providesTags: ["Orders"] as any,
+      invalidatesTags: ["Orders"] as any,
     }),
   }),
 });

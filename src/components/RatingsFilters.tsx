@@ -45,7 +45,7 @@ const RatingsFilters = () => {
             <Ratings size="20px" space="5px" numOfRating={index + 1} />
           </div>
         ))
-        .toReversed()}
+        .reverse()}
     </div>
   );
 };

@@ -26,7 +26,7 @@ type Props = {
 const SingleOrder: FC<Props> = ({ params }) => {
   const { isLoading, data, refetch } = useGetSingleOrdersQuery(params.id);
   const { refetch: orderStatusRefetch } = useGetOrderStatusQuery({});
-  console.log(data?.data);
+
   const [
     updateOrderStatus,
     { isSuccess, error, isLoading: updateOrderLoading },
@@ -152,10 +152,19 @@ const SingleOrder: FC<Props> = ({ params }) => {
                       {data?.order?.orderItems?.map((item: any) => (
                         <>
                           <tr key={item?.product}>
-                            <td className="border border-gray-400 p-2">
-                              {item?.productName}{" "}
-                              <span className="font-bold text-sm">
-                                x {item?.quantity}
+                            <td className="border border-gray-400 p-2 flex items-center justify-between">
+                              <span>
+                                {" "}
+                                {item?.productName}{" "}
+                                <span className="font-bold text-sm font-sans">
+                                  x {item?.quantity}
+                                </span>
+                              </span>{" "}
+                              <span className="font-bold text-sm font-sans">
+                                size: {item?.size}
+                              </span>
+                              <span className="font-bold text-sm font-sans">
+                                color: {item?.colors}
                               </span>
                             </td>
                             <td className="border border-gray-400 p-2">

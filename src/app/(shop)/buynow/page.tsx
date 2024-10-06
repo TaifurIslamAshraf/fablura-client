@@ -108,13 +108,7 @@ const ByNowCheckout = () => {
 
   // lg:mt-[140px] mt-[80px]
   return (
-    <div
-      className={cn(
-        styles.paddingX,
-        styles.paddingY,
-        "w-full mx-auto"
-      )}
-    >
+    <div className={cn(styles.paddingX, styles.paddingY, "w-full mx-auto")}>
       <div className="">
         <h1 className={cn("text-3xl font-semibold")}>Checkout</h1>
         <Separator />

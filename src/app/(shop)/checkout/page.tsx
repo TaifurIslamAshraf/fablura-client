@@ -83,7 +83,8 @@ const Checkout = () => {
       image: item?.product?.image,
       product: item?.productId,
       colors: item?.colors,
-      size: item?.size
+      size: item?.size,
+      _id: item?._id,
     }));
 
     const data = {
@@ -95,7 +96,6 @@ const Checkout = () => {
       shippingPrice: minShippingPrice,
       totalAmount: totalAmount,
     };
-    console.log(orderItems);
 
     await createOrder(data);
     await orderStatusRefetch();
@@ -123,13 +123,7 @@ const Checkout = () => {
 
   // lg:mt-[140px] mt-[80px]
   return (
-    <div
-      className={cn(
-        styles.paddingX,
-        styles.paddingY,
-        " w-full mx-auto"
-      )}
-    >
+    <div className={cn(styles.paddingX, styles.paddingY, " w-full mx-auto")}>
       <div className="">
         <h1 className={cn("text-3xl font-semibold")}>Checkout</h1>
         <Separator />

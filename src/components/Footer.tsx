@@ -51,8 +51,8 @@ const Footer = () => {
             height={60}
           />
           <div className="space-y-2">
-            <h1 className="font-semibold text-xl">১০০% ন্যাচারাল</h1>
-            <p>প্রাকৃতিক উপাদান ব্যবহার করতে আমরা প্রতিশ্রুতিবদ্ধ</p>
+            <h1 className="font-semibold text-xl">১০০% অরজিনাল</h1>
+            <p>অরজিনাল পণ্য দিতে আমরা প্রতিশ্রুতিবদ্ধ</p>
           </div>
         </div>
       </div>
@@ -70,14 +70,13 @@ const Footer = () => {
               <Image src={Logo} alt="shop logo" width={100} height={100} />
             </div>
             <p className="text-[#cfc6c6]">
-              At Varimartbd.com, we strive to ensure your complete satisfaction
-              with every purchase. If, for any reason, you are not entirely
-              satisfied with your order due to receiving a broken or
-              misrepresented product, we are here to assist you with our
-              straightforward return policy.
+              At Fablura, we prioritize customer satisfaction and strive to
+              ensure that your shopping experience with us is seamless. If you
+              are not completely satisfied with your purchase, we’re here to
+              help with an easy return and exchange process.
             </p>
             <div className="flex items-center gap-4">
-              <Link href={"/"}>
+              <Link href={"https://www.facebook.com/fablura0/"} target="_blank">
                 <Facebook className="border border-secondary h-[45px] p-2 w-[45px] rounded-full" />
               </Link>
 
@@ -85,11 +84,11 @@ const Footer = () => {
                 <Youtube className="border border-secondary h-[45px] p-2 w-[45px] rounded-full" />
               </Link>
 
-              <Link href={"mailto:varimartbd@gmail.com"}>
+              <Link href={"mailto:fablurabd@gmail.com"}>
                 <Mail className="border border-secondary h-[45px] p-2 w-[45px] rounded-full" />
               </Link>
 
-              <Link href={"tel:+8801606677285"}>
+              <Link href={"tel:+8801929185729"}>
                 <Phone className="border border-secondary h-[45px] p-2 w-[45px] rounded-full" />
               </Link>
             </div>
@@ -124,13 +123,13 @@ const Footer = () => {
             <div className="flex flex-col gap-2">
               <Link
                 target="_blank"
-                href="https://wa.me/+8801606677285?text=How can i help you ?"
+                href="https://wa.me/+8801929185729?text=Can i make a order ?"
               >
-                Whatsapp: +8801606677285
+                Whatsapp: +8801929185729
               </Link>
-              <Link href={"tel:+8801645120517"}>Phone: +8801606677285</Link>
-              <Link href={"mailto:varimartbd@gmail.com"}>
-                Email: varimartbd@gmail.com
+              <Link href={"tel:+8801929185729"}>Phone: +8801929185729</Link>
+              <Link href={"mailto:fablurabd@gmail.com"}>
+                Email: fablurabd@gmail.com
               </Link>
             </div>
           </div>
@@ -138,7 +137,7 @@ const Footer = () => {
       </div>
 
       <div className="font-semibold text-sm flex items-center justify-between bg-[#275b5f] px-10 py-3 text-white">
-        <span>&copy; 2024 varimartbd</span>
+        <span>&copy; 2024 fablurabd</span>
         <span>
           develop by{" "}
           <Link

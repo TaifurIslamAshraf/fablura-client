@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-
 import ProductFormPreview from "@/app/(dashboard)/components/productForm/ProductFormPreview";
 import ProductFormStep from "@/app/(dashboard)/components/productForm/ProductFormStep";
 import ProductInfoForm from "@/app/(dashboard)/components/productForm/ProductInfoForm";
@@ -27,7 +26,7 @@ const CreateProduct = () => {
   const { productCreateData } = useSelector((state: any) => state.product);
   const [createProduct, { data, isSuccess, error, isLoading }] =
     useCreateProductMutation({});
-console.log("productCreateData", productCreateData.colors)
+
   const handleCreate = async () => {
     try {
       const formData = new FormData();
@@ -42,7 +41,7 @@ console.log("productCreateData", productCreateData.colors)
       formData.append("shipping", productCreateData.shipping);
       formData.append("description", productCreateData.description);
       formData.append("colors", JSON.stringify(productCreateData.colors));
-    formData.append("size", JSON.stringify(productCreateData.size));
+      formData.append("size", JSON.stringify(productCreateData.size));
 
       // Append images
       localImages.forEach((image) => {
@@ -52,8 +51,6 @@ console.log("productCreateData", productCreateData.colors)
       await createProduct({
         data: formData,
       });
-
-      console.log(formData);
 
       customRevalidateTag("getAllProducts");
     } catch (error) {
@@ -94,11 +91,10 @@ console.log("productCreateData", productCreateData.colors)
                 setFormStep={setFormStep}
               />
             )}
-       
-            {formStep === 1 &&
-              
-                <ProductDescForm formStep={formStep} setFormStep={setFormStep} />
-           }
+
+            {formStep === 1 && (
+              <ProductDescForm formStep={formStep} setFormStep={setFormStep} />
+            )}
 
             {formStep === 2 && <ProductFormPreview localImages={localImages} />}
 
