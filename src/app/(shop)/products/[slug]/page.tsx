@@ -1,6 +1,7 @@
 import { styles } from "@/app/styles";
 import Cart from "@/components/Cart";
 import ColorsAndSize from "@/components/ColorsAndSize";
+import ProductDesc from "@/components/ProductDesc";
 
 import ProductCarousel from "@/components/ProductSlider";
 import Ratings from "@/components/Ratings";
@@ -23,7 +24,6 @@ const page: FC<Props> = async ({ params }) => {
   const { slug } = params;
   const product = await singleProduct(slug);
   const productInfo = product?.product;
-  const parsedDescription = JSON.parse(productInfo?.description || "{}");
 
   // lg:mt-[140px] mt-[70px]
   return (
@@ -79,8 +79,8 @@ const page: FC<Props> = async ({ params }) => {
                 </div>
               )}
             </div>
-           <ColorsAndSize product={productInfo} />
-         
+            <ColorsAndSize product={productInfo} />
+
             <div className="text-xs space-y-2 pt-3">
               <h2 className="flex items-center gap-2">
                 <RefreshCcw /> <span>7 Days Replacement Policy</span>
@@ -103,79 +103,12 @@ const page: FC<Props> = async ({ params }) => {
       </div>
 
       <div className="bg-primary-foreground my-4 lg:mx-6 mx-0 py-4">
-       <h1 className="text-2xl font-semibold px-4">Description</h1>
-       <Separator className="my-5" />
-         {/* Description */}
-      <div className="px-4">
-        <h2 className="text-lg font-semibold text-gray-700">Description</h2>
-        <div className="mt-2 text-gray-600 space-y-2">
-          {parsedDescription?.blocks?.map((block: any) => {
-            switch (block.type) {
-              case "paragraph":
-                return <p key={block.id}>{block.data.text}</p>;
-              case "header":
-                return (
-                  <h2
-                    key={block.id}
-                    className={`text-${block.data.level * 2}xl font-semibold`}
-                  >
-                    {block.data.text}
-                  </h2>
-                );
-              case "list":
-                return (
-                  <ul
-                    key={block.id}
-                    className="list-disc ml-6 space-y-1"
-                  >
-                    {block.data.items.map((item: any, index: number) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
-                );
-              case "linkTool":
-                return (
-                  <a
-                    key={block.id}
-                    href={block.data.link}
-                    className="text-blue-500 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {block.data.link}
-                  </a>
-                );
-              case "table":
-                return (
-                  <table key={block.id} className="table-auto w-full border-collapse border border-gray-300">
-                    <tbody className="bg-neutral-100">
-                      {block.data.content.map((row: any, rowIndex: number) => (
-                        <tr key={rowIndex}>
-                          {row.map((cell: any, cellIndex: number) => (
-                            <td
-                              key={cellIndex}
-                              className="border border-gray-300 p-2"
-                            >
-                              {cell}
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                );
-              case "marker":
-                return (
-                  <p key={block.id}>
-                    <mark className="bg-yellow-300">{block.data.text}</mark>
-                  </p>
-                );
-              default:
-                return null;
-            }
-          })}
+        <h1 className="text-2xl font-semibold px-4">Description</h1>
+        <Separator className="my-5" />
+        {/* Description */}
+        <div className="px-4">
+          <ProductDesc productDesc={productInfo?.description} />
         </div>
-      </div>
       </div>
 
       <div className="bg-primary-foreground my-4 lg:mx-6 mx-0 py-4">

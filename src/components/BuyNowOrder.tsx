@@ -33,13 +33,24 @@ const BuyNowOrder = ({
           {selectItem?.map((item: any) => (
             <>
               <tr key={item.productId}>
-              <td className="border border-gray-400 p-2 flex items-center justify-between">
-                 <span> {item?.productName}  <span className="font-bold text-sm font-sans">x {item?.quantity}</span></span>{" "}
-                 
-                  <span className="font-bold text-sm font-sans">size: {item?.size}</span>
-                  <span className="font-bold text-sm font-sans">color: {item?.colors}</span>
+                <td className="border border-gray-400 p-2 flex items-center justify-between">
+                  <span>
+                    {" "}
+                    {item?.productName}{" "}
+                    <span className="font-bold text-sm font-sans">
+                      x {item?.quantity}
+                    </span>
+                  </span>{" "}
+                  <div className="flex flex-col border-l pl-2">
+                    <span className="font-bold text-sm font-sans">
+                      size: {item?.size}
+                    </span>
+                    <span className="font-bold text-sm font-sans">
+                      color: {item?.colors}
+                    </span>
+                  </div>
                 </td>
-               
+
                 <td className="border border-gray-400 p-2">{item.price}</td>
               </tr>
             </>

@@ -16,7 +16,7 @@ const Footer = () => {
       <div
         className={cn(
           styles.paddingX,
-          "bg-secondary py-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-start gap-20 md:gap-6"
+          "bg-secondary justify-evenly py-6 flex items-center flex-wrap gap-20 md:gap-6"
         )}
       >
         <div className="flex items-center justify-center px-2 gap-3">
@@ -43,18 +43,6 @@ const Footer = () => {
             <p>বিভিন্ন পেমেন্ট পদ্ধতি থেকে বেছে নিন</p>
           </div>
         </div>
-        <div className="flex items-center justify-center px-2 gap-3">
-          <Image
-            src={Natural}
-            alt="super fast delivery"
-            width={60}
-            height={60}
-          />
-          <div className="space-y-2">
-            <h1 className="font-semibold text-xl">১০০% অরজিনাল</h1>
-            <p>অরজিনাল পণ্য দিতে আমরা প্রতিশ্রুতিবদ্ধ</p>
-          </div>
-        </div>
       </div>
 
       <div className="">
@@ -69,7 +57,7 @@ const Footer = () => {
             <div className="">
               <Image src={Logo} alt="shop logo" width={100} height={100} />
             </div>
-            <p className="text-[#cfc6c6]">
+            <p className="text-[#cfc6c6] text-justify">
               At Fablura, we prioritize customer satisfaction and strive to
               ensure that your shopping experience with us is seamless. If you
               are not completely satisfied with your purchase, we’re here to

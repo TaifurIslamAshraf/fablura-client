@@ -36,6 +36,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cookies-next": "^4.1.0",
+    "dompurify": "^3.1.7",
     "embla-carousel-autoplay": "^8.0.0-rc19",
     "embla-carousel-react": "^8.0.0-rc19",
     "i18next": "^23.7.16",
@@ -68,6 +69,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/dompurify": "^3.0.5",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20",
     "@types/react": "^18",
