@@ -2,6 +2,8 @@ import { styles } from "@/app/styles";
 import { mixProduct } from "@/lib/fetch/getProduct";
 import { cn } from "@/lib/utils";
 import ProductCard from "./ProductCard";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const MixProdcts = async () => {
   const data = await mixProduct();
@@ -14,6 +16,14 @@ const MixProdcts = async () => {
           <ProductCard key={item._id} product={item} />
         ))}
       </div>
+
+      {data?.products?.length > 10 && (
+        <Link href={"/products"} className="my-4 underline">
+          <Button variant={"outline"} size={"sm"}>
+            See More
+          </Button>
+        </Link>
+      )}
     </div>
   );
 };

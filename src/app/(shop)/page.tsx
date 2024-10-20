@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { getBanners } from "@/lib/fetch/banner.data";
 import { styles } from "../styles";
 
+
 // mt-[70px] lg:mt-[140px]
 export default async function Home() {
   const banners = await getBanners("mainBanner");
@@ -34,6 +35,7 @@ export default async function Home() {
 
       <div className={cn(styles.paddingX)}>
         <MixProdcts />
+        
       </div>
       <div className={cn(styles.paddingX)}>
         <SoldProducts />
