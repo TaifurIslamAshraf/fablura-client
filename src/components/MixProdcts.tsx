@@ -17,11 +17,20 @@ const MixProdcts = async () => {
         ))}
       </div>
 
-      <Link href={"/products"} className="my-4 underline w-[160px] mx-auto">
-        <Button variant={"outline"} size={"sm"}>
-          See More
-        </Button>
-      </Link>
+      {data?.pagination?.numberOfProducts > 10 && (
+        <div className="flex justify-center mt-10">
+          {" "}
+          {/* Center the button */}
+          <Link href={"/products"}>
+            <Button
+              className="bg-gray-300 underline w-[200px] flex items-center justify-center"
+              variant={"outline"}
+            >
+              See More
+            </Button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

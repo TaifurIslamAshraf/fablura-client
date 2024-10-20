@@ -25,15 +25,16 @@ const Paginations: FC<Props> = ({ pagination, category, type }) => {
   const totalPage = Array.from({ length: pagination?.totalPage });
 
   const nextPage = pagination?.totalPage === 1 ? 1 : pagination?.nextPage;
+  const getCategoryQuery = category ? `&subcategory=${category}&&` : "";
 
   const paginationNextPage =
     type === "user"
-      ? `/products?subcategory=${category}&&page=${nextPage}`
+      ? `/products?${getCategoryQuery}page=${nextPage}`
       : `/dashboard/products?page=${nextPage}`;
 
   const paginationPrevPage =
     type === "user"
-      ? `/products?subcategory=${category}&&page=${pagination?.prevPage}`
+      ? `/products?${getCategoryQuery}page=${pagination?.prevPage}`
       : `/dashboard/products?page=${pagination?.prevPage}`;
 
   return (
@@ -49,7 +50,7 @@ const Paginations: FC<Props> = ({ pagination, category, type }) => {
               <PaginationLink
                 href={
                   type === "user"
-                    ? `/products?subcategory=${category}&&page=${index + 1}`
+                    ? `/products?${getCategoryQuery}page=${index + 1}`
                     : `/dashboard/products?page=${index + 1}`
                 }
                 isActive={index + 1 === pagination?.currentPage}

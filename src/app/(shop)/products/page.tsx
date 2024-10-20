@@ -71,11 +71,13 @@ const Products = async ({ searchParams }: Props) => {
       </div>
 
       {/* paginations  */}
-      <Paginations
-        type="user"
-        pagination={data?.pagination}
-        category={searchParams?.subcategory as string}
-      />
+      {data?.pagination?.numberOfProducts > 10 && (
+        <Paginations
+          type="user"
+          pagination={data?.pagination}
+          category={searchParams?.subcategory as string}
+        />
+      )}
     </div>
   );
 };
