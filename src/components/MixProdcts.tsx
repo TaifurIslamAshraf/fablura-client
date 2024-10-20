@@ -17,13 +17,11 @@ const MixProdcts = async () => {
         ))}
       </div>
 
-      {data?.products?.length > 10 && (
-        <Link href={"/products"} className="my-4 underline w-[160px] mx-auto">
-          <Button variant={"outline"} size={"sm"}>
-            See More
-          </Button>
-        </Link>
-      )}
+      <Link href={"/products"} className="my-4 underline w-[160px] mx-auto">
+        <Button variant={"outline"} size={"sm"}>
+          See More
+        </Button>
+      </Link>
     </div>
   );
 };
