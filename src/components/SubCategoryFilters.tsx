@@ -18,7 +18,7 @@ const SubCategoryFilters = ({ subcategory }: Props) => {
       {subcategory?.map((item: any) => (
         <Link
           className="font-[500] hover:underline hover:text-[#000000b2]"
-          href={`/products?subcategory=${item._id}`}
+          href={`/category/${item._id}`}
           key={item._id}
         >
           {item.name}

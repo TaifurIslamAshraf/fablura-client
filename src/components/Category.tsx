@@ -51,10 +51,7 @@ const Category = () => {
                     className="py-1 px-4 hover:bg-white hover:underline"
                     key={subItem._id}
                   >
-                    <Link
-                      href={`/products?subcategory=${subItem._id}`}
-                      className="block"
-                    >
+                    <Link href={`/category/${subItem._id}`} className="block">
                       {" "}
                       {subItem.name}
                     </Link>
