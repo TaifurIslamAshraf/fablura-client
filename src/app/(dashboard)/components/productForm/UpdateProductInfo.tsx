@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -33,8 +34,8 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 
-import AddColorsSize from "./AddColorsSize";
 import dynamic from "next/dynamic";
+import AddColorsSize from "./AddColorsSize";
 
 const UpdateDescForm = dynamic(() => import("./UpdateDescForm"), {
   ssr: false,
@@ -297,6 +298,9 @@ const UpdateProductInfo: FC<Props> = ({ product }) => {
                 accept="image/png, image/jpeg, image/jpg, image/webp"
                 placeholder="Product Image(max 5)"
               />
+              <FormDescription>
+                If you upload new image existing images should be deleted
+              </FormDescription>
             </div>
           </div>
           <div className="space-y-5">
