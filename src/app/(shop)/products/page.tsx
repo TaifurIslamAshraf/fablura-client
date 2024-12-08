@@ -13,10 +13,12 @@ import { getAllProducts } from "@/lib/fetch/getProduct";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-const Products = async ({ searchParams }: Props) => {
+const Products = async (props: Props) => {
+  const searchParams = await props.searchParams;
+
   const data = await getAllProducts(searchParams);
 
   const banners = await getBanners(

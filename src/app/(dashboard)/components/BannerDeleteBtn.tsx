@@ -22,7 +22,7 @@ const BannerDeleteBtn: FC<Props> = ({ id }) => {
       id: bannerId,
     });
 
-    customRevalidateTag("Banner");
+    await customRevalidateTag("Banner");
   };
 
   useEffect(() => {
@@ -34,17 +34,13 @@ const BannerDeleteBtn: FC<Props> = ({ id }) => {
   }, [error, isSuccess]);
 
   return (
-   <>
-   <AlertPopup actionFunc={() => handleCustomerReviewDelete(id)}>
-   <Button
-      disabled={isLoading}
-      size={"icon"}
-      className="bg-red-400"
-    >
-      <Trash2 />
-    </Button>
-   </AlertPopup>
-   </>
+    <>
+      <AlertPopup actionFunc={() => handleCustomerReviewDelete(id)}>
+        <Button disabled={isLoading} size={"icon"} className="bg-red-400">
+          <Trash2 />
+        </Button>
+      </AlertPopup>
+    </>
   );
 };
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 
 import ProductFormPreview from "@/app/(dashboard)/components/productForm/ProductFormPreview";
 import ProductFormStep from "@/app/(dashboard)/components/productForm/ProductFormStep";
@@ -57,7 +57,7 @@ const CreateProduct = () => {
         data: formData,
       });
 
-      customRevalidateTag("getAllProducts");
+      await customRevalidateTag("getAllProducts");
     } catch (error) {
       // Handle errors
       console.error("Error creating product:", error);

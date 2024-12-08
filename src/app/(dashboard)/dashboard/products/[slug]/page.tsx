@@ -3,11 +3,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { singleProduct } from "@/lib/fetch/getProduct";
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 const page = async ({ params }: Props) => {
-  const product = await singleProduct(params.slug);
+  const slug = (await params).slug;
+  const product = await singleProduct(slug);
 
   return (
     <div className="ml-[230px] mt-[70px] p-4">

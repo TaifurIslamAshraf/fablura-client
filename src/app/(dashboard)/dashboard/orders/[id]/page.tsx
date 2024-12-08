@@ -16,14 +16,13 @@ import {
   useGetSingleOrdersQuery,
   useUpdateOrderStatusMutation,
 } from "@/redux/features/orders/orderApi";
-import { FC, useEffect } from "react";
+import { useParams } from "next/navigation";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
 
-type Props = {
-  params: { id: string };
-};
+const SingleOrder = () => {
+  const params = useParams<{ id: string }>();
 
-const SingleOrder: FC<Props> = ({ params }) => {
   const { isLoading, data, refetch } = useGetSingleOrdersQuery(params.id);
   const { refetch: orderStatusRefetch } = useGetOrderStatusQuery({});
 
@@ -38,7 +37,7 @@ const SingleOrder: FC<Props> = ({ params }) => {
       data: { orderStatus: value },
     });
 
-    customRevalidateTag("getAllProducts");
+    await customRevalidateTag("getAllProducts");
     await refetch();
     await orderStatusRefetch();
   };

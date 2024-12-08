@@ -10,10 +10,11 @@ import { IProduct } from "../../../../../types/product";
 import ProductAction from "../../components/ProductAction";
 
 type Props = {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-const page: FC<Props> = async ({ searchParams }) => {
+const page: FC<Props> = async (props) => {
+  const searchParams = await props.searchParams;
   const products = await getAllProducts(searchParams);
 
   return (

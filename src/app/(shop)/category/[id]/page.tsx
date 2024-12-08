@@ -13,13 +13,15 @@ import { getAllProducts } from "@/lib/fetch/getProduct";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 const CategoryProducts = async ({ params }: Props) => {
-  const data = await getAllProducts({ subcategory: params.id });
+  const id = (await params).id;
 
-  const banners = await getBanners("categoryBanner", params?.id as string);
+  const data = await getAllProducts({ subcategory: id });
+
+  const banners = await getBanners("categoryBanner", id);
 
   // lg:mt-[140px] mt-[65px]
   return (
@@ -69,11 +71,7 @@ const CategoryProducts = async ({ params }: Props) => {
 
       {/* paginations  */}
       {data?.pagination?.numberOfProducts > 10 && (
-        <Paginations
-          type="user"
-          pagination={data?.pagination}
-          category={params?.id as string}
-        />
+        <Paginations type="user" pagination={data?.pagination} category={id} />
       )}
     </div>
   );

@@ -38,8 +38,6 @@ const CartPage = () => {
     (state: any) => state.cart
   );
 
- 
-
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -55,7 +53,6 @@ const CartPage = () => {
     setToggleProduct((prev) =>
       prev?.map((item) => ({ ...item, selected: e.target.checked }))
     );
-
 
     await syncCart({ isSelectAll: e.target.checked });
     setIsLoadingFetch(false);
@@ -128,23 +125,22 @@ const CartPage = () => {
   };
 
   //size change
-  const handleSizeChange = async (cartId: string, value:string) => {
+  const handleSizeChange = async (cartId: string, value: string) => {
     setIsLoadingFetch(true);
     await syncCart({ cartItemId: cartId, size: value });
     await refetch();
     setIsLoadingFetch(false);
-  }
+  };
 
   //colors change
-  const handleColorsChange = async (cartId: string, value:string) => {
+  const handleColorsChange = async (cartId: string, value: string) => {
     setIsLoadingFetch(true);
     await syncCart({ cartItemId: cartId, colors: value });
     await refetch();
     setIsLoadingFetch(false);
-  }
+  };
 
   //side effects
-
 
   useEffect(() => {
     const initialToggleProduct =
@@ -160,10 +156,10 @@ const CartPage = () => {
   }, [allCartProducts?.selectAll]);
 
   useEffect(() => {
-   if(isError){
-    const errorMessage = error as any
-    toast.error(errorMessage?.data?.message)
-   }
+    if (isError) {
+      const errorMessage = error as any;
+      toast.error(errorMessage?.data?.message);
+    }
   }, [error, isError]);
 
   //for handle hidretion errro
@@ -266,40 +262,59 @@ const CartPage = () => {
                               </div>
 
                               <div className="basis-[50%] block md:flex md:justify-between md:gap-0 items-center justify-center gap-10">
-
                                 <div className="flex flex-col gap-3">
-
-                            
-                                  <Select onValueChange={(value) => handleSizeChange(product?._id, value)} defaultValue={product?.size}>
+                                  <Select
+                                    onValueChange={(value) =>
+                                      handleSizeChange(product?._id, value)
+                                    }
+                                    defaultValue={product?.size}
+                                  >
                                     <SelectTrigger className="w-full md:min-w-[140px]">
                                       <SelectValue placeholder="Select Size" />
                                     </SelectTrigger>
                                     <SelectContent className="w-full md:min-w-[140px]">
-
-
                                       {product?.product?.size
-                                        ?.filter((item: any) => item?.available === true).map((filterItem: any, index: number) => (
-                                          <SelectItem key={index} value={filterItem?.name}>
-                                            {filterItem?.name}
-                                          </SelectItem>
-                                        ))}
+                                        ?.filter(
+                                          (item: any) =>
+                                            item?.available === true
+                                        )
+                                        .map(
+                                          (filterItem: any, index: number) => (
+                                            <SelectItem
+                                              key={index}
+                                              value={filterItem?.name}
+                                            >
+                                              {filterItem?.name}
+                                            </SelectItem>
+                                          )
+                                        )}
                                     </SelectContent>
                                   </Select>
 
-                                  
-                                  <Select onValueChange={(value) => handleColorsChange(product?._id, value)} defaultValue={product?.colors}>
+                                  <Select
+                                    onValueChange={(value) =>
+                                      handleColorsChange(product?._id, value)
+                                    }
+                                    defaultValue={product?.colors}
+                                  >
                                     <SelectTrigger className="w-full md:min-w-[140px]">
                                       <SelectValue placeholder="Select Color" />
                                     </SelectTrigger>
                                     <SelectContent className="w-full md:min-w-[140px]">
-
-
                                       {product?.product?.colors
-                                        ?.filter((item: any) => item?.stock === true).map((filterItem: any, index: number) => (
-                                          <SelectItem key={index} value={filterItem?.name}>
-                                            {filterItem?.name}
-                                          </SelectItem>
-                                        ))}
+                                        ?.filter(
+                                          (item: any) => item?.stock === true
+                                        )
+                                        .map(
+                                          (filterItem: any, index: number) => (
+                                            <SelectItem
+                                              key={index}
+                                              value={filterItem?.name}
+                                            >
+                                              {filterItem?.name}
+                                            </SelectItem>
+                                          )
+                                        )}
                                     </SelectContent>
                                   </Select>
 

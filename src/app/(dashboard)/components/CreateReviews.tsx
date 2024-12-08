@@ -29,7 +29,7 @@ const CreateReviews = () => {
         await createReview({
           data: formData,
         });
-        customRevalidateTag("customerReview");
+        await customRevalidateTag("customerReview");
       },
     });
 

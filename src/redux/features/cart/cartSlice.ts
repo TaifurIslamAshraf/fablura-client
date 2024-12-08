@@ -12,13 +12,12 @@ interface CartType {
 }
 
 const initialState: CartType = {
-  allCartProducts:
-    {
-      success: "",
-      message: "",
-      cartItem: [],
-      selectAll: true,
-    } || "",
+  allCartProducts: {
+    success: "",
+    message: "",
+    cartItem: [],
+    selectAll: true,
+  },
   totalPrice: {},
   buyNowItem: {},
 };

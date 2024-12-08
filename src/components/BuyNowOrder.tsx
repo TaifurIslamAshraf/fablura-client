@@ -32,7 +32,7 @@ const BuyNowOrder = ({
         <tbody className="text-sm">
           {selectItem?.map((item: any) => (
             <>
-              <tr key={item.productId}>
+              <tr key={item?.productId}>
                 <td className="border border-gray-400 p-2 flex items-center justify-between">
                   <span>
                     {" "}

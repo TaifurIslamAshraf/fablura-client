@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback } from "react";
+import { useCallback } from "react";
 
 import ComponentLoader from "@/components/ComponentLoader";
 import { Button } from "@/components/ui/button";
@@ -20,11 +20,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import OrderAction from "../../components/OrderAction";
 
-type Props = {
-  searchParams: { [key: string]: string | string[] | undefined };
-};
-
-const AllOrders: FC<Props> = () => {
+const AllOrders = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   // eslint-disable-next-line react-hooks/exhaustive-deps

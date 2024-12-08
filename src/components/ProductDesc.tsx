@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import "@/app/richTextEditor.css";
+import { JSX, useEffect, useState } from "react";
 
 // We'll use a type assertion for DOMPurify
 let DOMPurify: {

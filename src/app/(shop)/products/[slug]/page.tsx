@@ -17,11 +17,11 @@ import Link from "next/link";
 import { FC } from "react";
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 const page: FC<Props> = async ({ params }) => {
-  const { slug } = params;
+  const { slug } = await params;
   const product = await singleProduct(slug);
   const productInfo = product?.product;
 

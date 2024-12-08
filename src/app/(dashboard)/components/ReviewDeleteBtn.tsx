@@ -18,23 +18,20 @@ const ReviewDeleteBtn: FC<Props> = ({ id }) => {
 
     if (data?.success) {
       toast.success("Customer review delete success");
-      customRevalidateTag("customerReview");
+      await customRevalidateTag("customerReview");
     } else if (!data?.success) {
       toast.error("Somthing is wrong");
     }
   };
 
   return (
-   <>
-   <AlertPopup actionFunc={() => handleCustomerReviewDelete(id)}>
-   <Button
-      size={"icon"}
-      className="bg-red-400"
-    >
-      <Trash2 />
-    </Button>
-   </AlertPopup>
-   </>
+    <>
+      <AlertPopup actionFunc={() => handleCustomerReviewDelete(id)}>
+        <Button size={"icon"} className="bg-red-400">
+          <Trash2 />
+        </Button>
+      </AlertPopup>
+    </>
   );
 };
 

@@ -116,8 +116,8 @@ const Reviews: FC<Props> = ({
         },
       });
 
-      customRevalidateTag("getSingleProduct");
-      customRevalidateTag("getAllProducts");
+      await customRevalidateTag("getSingleProduct");
+      await customRevalidateTag("getAllProducts");
       await refetch();
       router.refresh();
     }

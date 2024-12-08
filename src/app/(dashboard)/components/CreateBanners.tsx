@@ -75,7 +75,7 @@ const CreateBanners = () => {
     await createBanner({
       data: formData,
     });
-    customRevalidateTag("Banner");
+    await customRevalidateTag("Banner");
   };
 
   useEffect(() => {

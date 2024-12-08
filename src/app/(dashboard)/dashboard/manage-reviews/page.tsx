@@ -53,8 +53,8 @@ const ManageReviews = () => {
     await updateReviewStatus({
       data,
     });
-    customRevalidateTag("getSingleProduct");
-    customRevalidateTag("getAllProducts");
+    await customRevalidateTag("getSingleProduct");
+    await customRevalidateTag("getAllProducts");
   };
 
   const handleDelete = async (reviewId: string, productId: string) => {
@@ -62,8 +62,8 @@ const ManageReviews = () => {
       reviewId,
       productId,
     });
-    customRevalidateTag("getSingleProduct");
-    customRevalidateTag("getAllProducts");
+    await customRevalidateTag("getSingleProduct");
+    await customRevalidateTag("getAllProducts");
   };
 
   useEffect(() => {
