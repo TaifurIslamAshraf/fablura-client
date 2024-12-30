@@ -1,8 +1,8 @@
 import { cn, serverUrl } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import Ratings from "./Ratings";
 import { CartDialog } from "./CartDialog";
+import Ratings from "./Ratings";
 
 type Props = {
   product: any;

@@ -1,9 +1,9 @@
 import { styles } from "@/app/styles";
+import { Button } from "@/components/ui/button";
 import { mixProduct } from "@/lib/fetch/getProduct";
 import { cn } from "@/lib/utils";
-import ProductCard from "./ProductCard";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import ProductCard from "./ProductCard";
 
 const MixProdcts = async () => {
   const data = await mixProduct();
