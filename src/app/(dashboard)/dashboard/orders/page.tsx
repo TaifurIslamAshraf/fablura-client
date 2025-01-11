@@ -1,9 +1,41 @@
 "use client";
 
-import { useCallback } from "react";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import {
+  ArrowUpDown,
+  ChevronDown,
+  Loader2,
+  RefreshCcw,
+  Search,
+} from "lucide-react";
+import { useState } from "react";
 
-import ComponentLoader from "@/components/ComponentLoader";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -11,209 +43,358 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { useGetAllOrdersQuery } from "@/redux/features/orders/orderApi";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { IOrders } from "../../../../../types/order";
-
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
 import OrderAction from "../../components/OrderAction";
 
-const AllOrders = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const params = new URLSearchParams(searchParams);
-  const defaultOrderStatus = params.get("orderStatus");
-
-  const { isLoading, data, refetch } = useGetAllOrdersQuery({
-    orderStatus: params.get("orderStatus") || "",
-    page: params.get("page") || "",
+const OrdersTable = () => {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
+  const [pagination, setPagination] = useState({
+    page: "1",
+  });
+  const [filters, setFilters] = useState({
+    search: "",
+    orderStatus: "",
   });
 
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      if (value) {
-        params.set(name, value);
-      } else {
-        params.delete(name);
-      }
+  const { data, isLoading, isFetching, refetch } = useGetAllOrdersQuery({
+    page: pagination.page,
+    orderStatus: filters.orderStatus,
+    search: filters.search,
+  });
 
-      return params.toString();
+  const columns: ColumnDef<any>[] = [
+    {
+      accessorKey: "orderId",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Order ID
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <span className="font-medium">{row.original.orderId}</span>
+      ),
     },
-    [params]
-  );
+    {
+      accessorKey: "shippingInfo.fullName",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Name
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+    },
+    {
+      accessorKey: "orderStatus",
+      header: "Order Status",
+      cell: ({ row }) => (
+        <div
+          className={cn(
+            row.original.orderStatus === "Pending" && "text-blue-400",
+            row.original.orderStatus === "Processing" && "text-orange-400",
+            row.original.orderStatus === "Shipped" && "text-purple-400",
+            row.original.orderStatus === "Delivered" && "text-green-400",
+            row.original.orderStatus === "Cancelled" && "text-red-400"
+          )}
+        >
+          {row.original.orderStatus}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "totalAmount",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Total Amount
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const amount = parseFloat(row.original.totalAmount);
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+        }).format(amount);
+      },
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Placed Date",
+      cell: ({ row }) => {
+        return new Date(row.original.createdAt).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      },
+    },
+    {
+      accessorKey: "deliveredAt",
+      header: "Delivered At",
+      cell: ({ row }) => {
+        return row.original.deliveredAt ? (
+          new Date(row.original.deliveredAt).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          })
+        ) : (
+          <span className="text-center">--/--</span>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => <OrderAction id={row.original._id} />,
+    },
+  ];
 
-  const handleChange = (value: string) => {
-    if (value === "All") {
-      router.push(`/dashboard/orders`);
-    } else {
-      router.push(`/dashboard/orders?orderStatus=${value}`);
-    }
+  const table = useReactTable({
+    data: data?.orders || [],
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+  });
 
-    refetch();
+  const handleSearch = (value: string) => {
+    setFilters((prev) => ({ ...prev, search: value }));
+    setPagination({ page: "1" }); // Reset to first page when searching
   };
 
-  const pagination = data?.pagination;
+  const handleStatusChange = (value: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      orderStatus: value === "All" ? "" : value,
+    }));
+    setPagination({ page: "1" }); // Reset to first page when changing status
+  };
+
+  const handleRefresh = async () => {
+    setPagination({ page: "1" }); // Reset to first page when refreshing
+    setFilters((prev) => ({ ...prev, search: "", orderStatus: "" })); // Clear filters
+    await refetch();
+  };
+
+  const handlePageChange = (page: string) => {
+    setPagination({ page });
+  };
 
   return (
-    <div className="ml-[230px] mt-[70px] p-4">
-      <h1 className="font-semibold text-2xl">All Orders</h1>
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>All Orders</CardTitle>
+            <CardDescription>
+              Manage and track all customer orders
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={isLoading || isFetching}
+            >
+              {isLoading || isFetching ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCcw className="mr-2 h-4 w-4" />
+              )}
+              Refresh
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center justify-between py-4">
+          <div className="flex items-center gap-2">
+            <div className="relative w-64">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search order ID..."
+                value={filters.search}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            <Select
+              value={filters.orderStatus || "All"}
+              onValueChange={handleStatusChange}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All</SelectItem>
+                <SelectItem value="Pending">Pending</SelectItem>
+                <SelectItem value="Processing">Processing</SelectItem>
+                <SelectItem value="Shipped">Shipped</SelectItem>
+                <SelectItem value="Delivered">Delivered</SelectItem>
+                <SelectItem value="Cancelled">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                Columns
+                <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
-      {isLoading ? (
-        <ComponentLoader />
-      ) : (
-        <div className="mt-6 space-y-4">
-          {data && (
-            <>
-              <div className="max-w-[300px] w-full">
-                <Select
-                  onValueChange={(value) => handleChange(value)}
-                  defaultValue={
-                    defaultOrderStatus ? (defaultOrderStatus as string) : "All"
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Filter by order status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="All">All</SelectItem>
-
-                    <SelectItem value="Pending">Pending</SelectItem>
-                    <SelectItem value="Processing">Processing</SelectItem>
-                    <SelectItem value="Shipped">Shipped</SelectItem>
-                    <SelectItem value="Delivered">Delivered</SelectItem>
-                    <SelectItem value="Cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <table className="border-collapse border-2 border-slate-300 p-4">
-                <thead>
-                  <tr>
-                    <th className="border-2 border-slate-200 px-4 py-2">
-                      Name
-                    </th>
-                    <th className="border-2 border-slate-200 px-4 py-2">
-                      Order Status
-                    </th>
-                    <th className="border-2 border-slate-200 px-4 py-2">
-                      Total Amount
-                    </th>
-                    <th className="border-2 border-slate-200 px-4 py-2">
-                      Placed Date
-                    </th>
-                    <th className="border-2 border-slate-200 px-4 py-2">
-                      Delivered At
-                    </th>
-                    <th className="border-2 border-slate-200 px-4 py-2">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data ? (
-                    data?.orders?.map((item: IOrders) => (
-                      <tr
-                        key={item._id}
+        {isLoading ? (
+          <div className="h-[400px] flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        ) : (
+          <>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <TableHead key={header.id}>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow
+                        key={row.id}
                         className="hover:bg-gray-50 transition-all duration-300"
                       >
-                        <td className="border-2 border-slate-200 px-4 py-2">
-                          {item.shippingInfo.fullName}
-                        </td>
-                        <td
-                          className={cn(
-                            item.orderStatus === "Pending" && "text-blue-400",
-                            item.orderStatus === "Delivered" &&
-                              "text-yellow-400",
-                            item.orderStatus === "Cancelled" && "text-red-400",
-                            "border-2 border-slate-200 px-4 py-2"
-                          )}
-                        >
-                          {item.orderStatus}
-                        </td>
-                        <td className="border-2 border-slate-200 px-4 py-2">
-                          {item.totalAmount}
-                        </td>
-                        <td className="border-2 border-slate-200 px-4 py-2">
-                          {new Date(item.createdAt).toLocaleDateString(
-                            "en-US",
-                            {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            }
-                          )}
-                        </td>
-                        <td className="border-2 border-slate-200 px-4 py-2 text-center">
-                          {item?.deliveredAt ? (
-                            <>
-                              {" "}
-                              {new Date(item.deliveredAt).toLocaleDateString(
-                                "en-US",
-                                {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                  hour12: true,
-                                }
-                              )}
-                            </>
-                          ) : (
-                            <span className="text-center">--/--</span>
-                          )}
-                        </td>
-                        <td className="border-2 border-slate-200 px-4 py-2">
-                          <OrderAction id={item._id} />
-                        </td>
-                      </tr>
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
                     ))
                   ) : (
-                    <div className=""></div>
+                    <TableRow>
+                      <TableCell
+                        colSpan={columns.length}
+                        className="h-24 text-center"
+                      >
+                        No orders found.
+                      </TableCell>
+                    </TableRow>
                   )}
-                </tbody>
-              </table>
-              <div className="flex items-center gap-6">
-                <Button
-                  size={"icon"}
-                  variant={"outline"}
-                  disabled={pagination.prevPage === null}
-                >
-                  <Link
-                    href={`/dashboard/orders?${createQueryString(
-                      "page",
-                      String(pagination.prevPage)
-                    )}`}
-                  >
-                    <ChevronLeft />
-                  </Link>
-                </Button>
-                <Button
-                  size={"icon"}
-                  variant={"outline"}
-                  disabled={pagination.nextPage === null}
-                >
-                  <Link
-                    href={`/dashboard/orders?${createQueryString(
-                      "page",
-                      String(pagination.nextPage)
-                    )}`}
-                  >
-                    <ChevronRight />
-                  </Link>
-                </Button>
-                <p className="text-sm">
-                  Total Orders: {pagination.numOfOrders}
-                </p>
+                </TableBody>
+              </Table>
+            </div>
+
+            <div className="flex items-center justify-between space-x-2 py-4">
+              <div className="flex-1 text-sm text-muted-foreground">
+                Showing {data?.orders?.length || 0} of{" "}
+                {data?.pagination?.numOfOrders || 0} orders
               </div>
-            </>
-          )}
-        </div>
-      )}
-    </div>
+              <div className="space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    handlePageChange((parseInt(pagination.page) - 1).toString())
+                  }
+                  disabled={pagination.page === "1" || isLoading}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    handlePageChange((parseInt(pagination.page) + 1).toString())
+                  }
+                  disabled={!data?.pagination?.nextPage || isLoading}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
-export default AllOrders;
+export default OrdersTable;

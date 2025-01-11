@@ -16,7 +16,7 @@ import { customRevalidateTag } from "@/lib/actions/RevalidateTag";
 
 import { LoadingButton } from "./LoaderButton";
 import Ratings from "./Ratings";
-import SectionLoader from "./SectionLoader";
+import { StableStarRating } from "./StabletarRating";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -60,7 +60,7 @@ const Reviews: FC<Props> = ({
   numOfReviews,
 }) => {
   const [isMount, setIsMount] = useState(false);
-  const [rating, setRating] = useState<number>();
+  const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState("");
 
   const router = useRouter();
@@ -99,8 +99,8 @@ const Reviews: FC<Props> = ({
   const reviewCounts: StarCounts = countStarRatings();
 
   //change ratings value
-  const handleChangeRating = (rating: number) => {
-    setRating(rating);
+  const handleChangeRating = (newRating: number) => {
+    setRating(newRating);
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -142,7 +142,7 @@ const Reviews: FC<Props> = ({
   }, [refetch]);
 
   if (!isMount) {
-    return <SectionLoader />;
+    return null;
   }
 
   return (
@@ -156,13 +156,11 @@ const Reviews: FC<Props> = ({
           <div className="space-y-3">
             <h2 className="font-[500] text-lg">Write rating & review</h2>
             <div className="">
-              <StarRatings
+              <StableStarRating
                 rating={rating}
-                starRatedColor="orange"
-                starHoverColor="orange"
-                starDimension="27px"
-                starSpacing="2px"
-                changeRating={handleChangeRating}
+                onRatingChange={(newRating) => setRating(newRating)}
+                size="27px"
+                isReadOnly={false}
               />
             </div>
             <Dialog>

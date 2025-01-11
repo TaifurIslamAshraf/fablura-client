@@ -50,11 +50,12 @@ const orderApi = apiSlice.injectEndpoints({
       providesTags: ["Orders"] as any,
     }),
     getAllOrders: build.query({
-      query: ({ orderStatus, page, refresh_token }) => ({
+      query: ({ orderStatus, page, search }) => ({
         url: "/order/all-orders",
         params: {
           orderStatus,
           page,
+          search,
         },
         method: "GET",
         credentials: "include",
@@ -87,6 +88,60 @@ const orderApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Orders"] as any,
     }),
+
+    getDailyOrderStats: build.query({
+      query: () => ({
+        url: "/order/analytics/daily",
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["Orders"] as any,
+    }),
+
+    getOrderStatusDistribution: build.query({
+      query: () => ({
+        url: "/order/analytics/status-distribution",
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["Orders"] as any,
+    }),
+
+    getPopularProducts: build.query({
+      query: () => ({
+        url: "/order/analytics/popular-products",
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["Orders"] as any,
+    }),
+
+    getPaymentMethodStats: build.query({
+      query: () => ({
+        url: "/order/analytics/payment-methods",
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["Orders"] as any,
+    }),
+
+    getProcessingTimeStats: build.query({
+      query: () => ({
+        url: "/order/analytics/processing-times",
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["Orders"] as any,
+    }),
+
+    getHourlyDistribution: build.query({
+      query: () => ({
+        url: "/order/analytics/hourly-distribution",
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["Orders"] as any,
+    }),
   }),
 });
 
@@ -99,4 +154,10 @@ export const {
   useGetSingleOrdersQuery,
   useUpdateOrderStatusMutation,
   useDeleteOrderMutation,
+  useGetDailyOrderStatsQuery,
+  useGetOrderStatusDistributionQuery,
+  useGetPopularProductsQuery,
+  useGetPaymentMethodStatsQuery,
+  useGetProcessingTimeStatsQuery,
+  useGetHourlyDistributionQuery,
 } = orderApi;

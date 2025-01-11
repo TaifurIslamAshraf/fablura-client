@@ -78,7 +78,7 @@ const CreateProduct = () => {
   }, [dispatch, error, isSuccess, router]);
 
   return (
-    <div className="ml-[230px] mt-[70px] p-4">
+    <div className="p-4">
       <div className="">
         <h1 className="font-semibold text-2xl mb-4">Create Product</h1>
 

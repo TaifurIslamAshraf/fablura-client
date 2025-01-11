@@ -1,22 +1,28 @@
 "use client";
 
+import { AlertPopup } from "@/components/AlertPopup";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import {
   useDeleteCategoryMutation,
   useDeleteSubcategoryMutation,
   useGetAllCategoryQuery,
 } from "@/redux/features/category/categoryApi";
-import { Trash2 } from "lucide-react";
+import { FolderTree, Layers, Plus, Tags, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { ICategory, ISubcategory } from "../../../../../types/category";
 import CreateCategory from "../../components/CreateCategory";
 import CreateSubategory from "../../components/CreateSubcategory";
-import { AlertPopup } from "@/components/AlertPopup";
 
 const CategorySubcategory = () => {
   const [subcategory, setSubcategory] = useState<ISubcategory | undefined>();
   const [categoryId, setCategoryId] = useState("");
+  const [showCreateCategory, setShowCreateCategory] = useState(false);
+  const [showCreateSubcategory, setShowCreateSubcategory] = useState(false);
 
   const { data, refetch } = useGetAllCategoryQuery({});
   const [
@@ -29,11 +35,7 @@ const CategorySubcategory = () => {
   ] = useDeleteCategoryMutation();
   const [
     deletesubCategory,
-    {
-      isSuccess: subCategoryIsSuccess,
-      error: subCategoryError,
-      isLoading: subCategoryIsLoading,
-    },
+    { isSuccess: subCategoryIsSuccess, error: subCategoryError },
   ] = useDeleteSubcategoryMutation();
 
   const category = data?.category as ICategory;
@@ -50,6 +52,7 @@ const CategorySubcategory = () => {
     await deleteCategory({ id });
     await refetch();
   };
+
   const handleDeletesubCategory = async (id: string) => {
     await deletesubCategory({ id });
     await refetch();
@@ -57,7 +60,7 @@ const CategorySubcategory = () => {
 
   useEffect(() => {
     if (categoryIsSuccess) {
-      toast.success("Category delete successfull");
+      toast.success("Category deleted successfully");
     } else if (categoryError) {
       const errorData = categoryError as any;
       toast.error(errorData?.data?.message);
@@ -66,7 +69,7 @@ const CategorySubcategory = () => {
 
   useEffect(() => {
     if (subCategoryIsSuccess) {
-      toast.success("Subcategory delete successfull");
+      toast.success("Subcategory deleted successfully");
     } else if (subCategoryError) {
       const errorData = subCategoryError as any;
       toast.error(errorData?.data?.message);
@@ -74,74 +77,170 @@ const CategorySubcategory = () => {
   }, [subCategoryError, subCategoryIsSuccess]);
 
   return (
-    <div className="ml-[230px] mt-[70px] p-4 space-y-8">
-      <div className="space-y-4">
-        <h1 className="font-semibold text-2xl">Manage Category</h1>
-        <div className="flex justify-between gap-6">
-          <CreateCategory />
-          <CreateSubategory />
+    <div className="py-4 space-y-6">
+      {/* Header Section */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">
+          Category Management
+        </h1>
+        <div className="flex gap-3">
+          <Button
+            onClick={() => setShowCreateCategory(true)}
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" /> Add Category
+          </Button>
+          <Button
+            onClick={() => setShowCreateSubcategory(true)}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" /> Add Subcategory
+          </Button>
         </div>
       </div>
-      <div className="space-y-4">
-        <h1 className="font-semibold text-2xl">All Category</h1>
-        <div className="flex justify-between gap-6">
-          <ul className="flex-1 bg-gray-100 shadow-md rounded-md">
-            {category?.map((item) => {
-              return (
-                <li
-                  onClick={() => handleCategory(item?._id, item?.subcategory)}
-                  className={cn(
-                    categoryId === item?._id.toString()
-                      ? "bg-blue-500 text-white"
-                      : "",
-                    "text-lg font-medium group cursor-pointer hover:bg-blue-400 hover:text-white transition-all py-1 my-2 px-4"
-                  )}
-                  key={item?._id}
-                >
-                  <div className="flex items-center justify-between">
-                    <span>{item?.name}</span>
-                   <AlertPopup actionFunc={() => handleDeleteCategory(item?._id)}>
-                   <button
-                      disabled={categoryIsLoading}
-                      className="group-hover:block hidden rounded bg-gray-50 p-1"
-                    >
-                      <Trash2 className="text-red-400" size={20} />
-                    </button>
-                   </AlertPopup>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-          <div className="flex-1 text-lg font-medium rounded-md">
-            {subcategory?.length! > 0 ? (
-              <ul className="shadow-md bg-gray-100 py-1">
-                {subcategory &&
-                  subcategory?.map((subItem) => (
-                    <li
-                      key={subItem?._id}
-                      className="text-lg group font-medium cursor-pointer hover:bg-green-400 hover:text-white transition-all py-1 my-2 px-4"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span>{subItem?.name}</span>
-                        <AlertPopup actionFunc={() => handleDeletesubCategory(subItem?._id)}>
-                        <button
-                          className="group-hover:block hidden rounded bg-gray-50 p-1"
+
+      {/* Create Forms */}
+      {showCreateCategory && (
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Tags className="h-5 w-5 text-blue-500" />
+              Create New Category
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CreateCategory onSuccess={() => setShowCreateCategory(false)} />
+          </CardContent>
+        </Card>
+      )}
+
+      {showCreateSubcategory && (
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Layers className="h-5 w-5 text-blue-500" />
+              Create New Subcategory
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CreateSubategory
+              onSuccess={() => setShowCreateSubcategory(false)}
+            />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Categories and Subcategories */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Categories List */}
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FolderTree className="h-5 w-5 text-blue-500" />
+              Categories
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-[400px] pr-4">
+              <div className="space-y-2">
+                {category?.map((item) => (
+                  <div
+                    key={item._id}
+                    onClick={() => handleCategory(item._id, item.subcategory)}
+                    className={cn(
+                      "relative group rounded-lg transition-all duration-200",
+                      "hover:bg-blue-50 cursor-pointer",
+                      categoryId === item._id && "bg-blue-100"
+                    )}
+                  >
+                    <div className="p-3 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Tags
+                          className={cn(
+                            "h-4 w-4 transition-colors",
+                            categoryId === item._id
+                              ? "text-blue-500"
+                              : "text-gray-500"
+                          )}
+                        />
+                        <span className="font-medium">{item.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="opacity-60">
+                          {item.subcategory?.length || 0} subcategories
+                        </Badge>
+                        <AlertPopup
+                          actionFunc={() => handleDeleteCategory(item._id)}
                         >
-                          <Trash2 className="text-red-400" size={20} />
-                        </button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                            disabled={categoryIsLoading}
+                          >
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                          </Button>
                         </AlertPopup>
                       </div>
-                    </li>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+
+        {/* Subcategories List */}
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Layers className="h-5 w-5 text-blue-500" />
+              Subcategories
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-[400px] pr-4">
+              {subcategory?.length! > 0 ? (
+                <div className="space-y-2">
+                  {subcategory?.map((subItem) => (
+                    <div
+                      key={subItem._id}
+                      className="relative group rounded-lg hover:bg-green-50 transition-all duration-200"
+                    >
+                      <div className="p-3 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Layers className="h-4 w-4 text-gray-500" />
+                          <span className="font-medium">{subItem.name}</span>
+                        </div>
+                        <AlertPopup
+                          actionFunc={() =>
+                            handleDeletesubCategory(subItem._id)
+                          }
+                        >
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                          </Button>
+                        </AlertPopup>
+                      </div>
+                    </div>
                   ))}
-              </ul>
-            ) : (
-              <h2 className="flex items-center justify-center h-full text-red-300">
-                Select a category
-              </h2>
-            )}
-          </div>
-        </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-[300px] text-gray-400">
+                  <FolderTree className="h-12 w-12 mb-2" />
+                  <p className="text-lg">
+                    Select a category to view subcategories
+                  </p>
+                </div>
+              )}
+            </ScrollArea>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

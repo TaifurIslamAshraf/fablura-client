@@ -7,6 +7,7 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: serverApi,
   }),
+  tagTypes: ["Orders", "Products", "Reviews", "Cart", "Users"],
   endpoints: (builder) => ({
     refreshToken: builder.query({
       query: () => ({

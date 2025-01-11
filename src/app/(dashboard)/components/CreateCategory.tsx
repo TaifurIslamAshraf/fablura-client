@@ -16,6 +16,7 @@ import {
   useGetAllCategoryQuery,
 } from "@/redux/features/category/categoryApi";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Tags } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -25,7 +26,11 @@ const createCategorySchema = z.object({
   name: z.string().min(1, "Category Name is Required"),
 });
 
-const CreateCategory = () => {
+interface CreateCategoryProps {
+  onSuccess?: () => void;
+}
+
+const CreateCategory = ({ onSuccess }: CreateCategoryProps) => {
   const [createCategory, { isLoading, isSuccess, error }] =
     useCreateCategoryMutation();
   const { refetch } = useGetAllCategoryQuery({});
@@ -48,41 +53,62 @@ const CreateCategory = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success("Category create successfull");
+      toast.success("Category created successfully");
       form.reset();
+      onSuccess?.();
     } else if (error) {
       const errorData = error as any;
       toast.error(errorData?.data?.message);
     }
-  }, [error, form, isSuccess]);
+  }, [error, form, isSuccess, onSuccess]);
 
   return (
-    <div className="bg-gray-100 p-4 space-y-3 flex-1">
-      <h1 className="font-medium text-lg">Create Category</h1>
+    <div className="space-y-4">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleCreateCategory)}
-          className="space-y-5"
+          className="space-y-4"
         >
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel className="text-sm font-medium">
+                  Category Name
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter Category Name" {...field} />
+                  <div className="flex items-center gap-2">
+                    <Tags className="h-4 w-4 text-blue-500" />
+                    <Input
+                      placeholder="Enter category name"
+                      {...field}
+                      className="w-full"
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {isLoading ? (
-            <LoadingButton className="w-full" />
-          ) : (
-            <Button className="w-full">Create Category</Button>
-          )}
+          <div className="flex justify-end gap-3 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                form.reset();
+                onSuccess?.();
+              }}
+            >
+              Cancel
+            </Button>
+            {isLoading ? (
+              <LoadingButton />
+            ) : (
+              <Button type="submit">Create Category</Button>
+            )}
+          </div>
         </form>
       </Form>
     </div>

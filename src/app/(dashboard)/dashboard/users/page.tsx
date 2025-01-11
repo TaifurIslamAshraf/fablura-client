@@ -1,6 +1,24 @@
 "use client";
 
 import ComponentLoader from "@/components/ComponentLoader";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -8,15 +26,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   useGetAllUsersQuery,
   useUpdateUserRoleMutation,
 } from "@/redux/features/auth/authApi";
-import { useEffect } from "react";
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Search,
+  SlidersHorizontal,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-type IUsers = {
+interface IUsers {
   address: string;
   avatar: string;
   createdAt: Date;
@@ -27,9 +61,18 @@ type IUsers = {
   role: string;
   updatedAt: Date;
   _id: string;
-};
+}
 
-const Users = () => {
+const UsersTable = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof IUsers | null;
+    direction: "asc" | "desc";
+  }>({ key: null, direction: "asc" });
+  const [roleFilter, setRoleFilter] = useState<string | null>(null);
+
   const { isLoading, data } = useGetAllUsersQuery({});
   const [updateUserRole, { isSuccess, error }] = useUpdateUserRoleMutation();
 
@@ -42,104 +85,227 @@ const Users = () => {
     });
   };
 
+  // Sort function
+  const sortData = (data: IUsers[]) => {
+    if (!sortConfig.key) return data;
+
+    return [...data].sort((a, b) => {
+      if (a[sortConfig.key!] < b[sortConfig.key!]) {
+        return sortConfig.direction === "asc" ? -1 : 1;
+      }
+      if (a[sortConfig.key!] > b[sortConfig.key!]) {
+        return sortConfig.direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
+  // Filter function
+  const filterData = (data: IUsers[]) => {
+    return data.filter((user) => {
+      const matchesSearch =
+        user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.phone.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesRole = roleFilter ? user.role === roleFilter : true;
+
+      return matchesSearch && matchesRole;
+    });
+  };
+
+  // Pagination
+  const lastItemIndex = currentPage * itemsPerPage;
+  const firstItemIndex = lastItemIndex - itemsPerPage;
+
+  const users = data?.users || [];
+  const filteredUsers = filterData(users);
+  const sortedUsers = sortData(filteredUsers);
+  const currentUsers = sortedUsers.slice(firstItemIndex, lastItemIndex);
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+
   useEffect(() => {
     if (isSuccess) {
-      toast.success("User Role update success");
+      toast.success("User role updated successfully");
     } else if (error) {
       const errorData = error as any;
       toast.error(errorData?.data?.message);
     }
   }, [error, isSuccess]);
 
+  const handleSort = (key: keyof IUsers) => {
+    setSortConfig({
+      key,
+      direction:
+        sortConfig.key === key && sortConfig.direction === "asc"
+          ? "desc"
+          : "asc",
+    });
+  };
+
   return (
-    <div className="ml-[230px] mt-[70px] p-4">
-      <div className="">
-        <h1 className="font-semibold text-2xl">All Users</h1>
-        <div className="mt-6 space-y-4">
-          {isLoading ? (
-            <ComponentLoader />
-          ) : (
-            <>
-              {data && (
-                <>
-                  <table className="border-collapse border-2 border-slate-300 p-4">
-                    <thead>
-                      <tr>
-                        <th className="border-2 border-slate-200 px-4 py-2">
-                          Name
-                        </th>
-                        <th className="border-2 border-slate-200 px-4 py-2">
-                          Email
-                        </th>
-                        <th className="border-2 border-slate-200 px-4 py-2">
-                          Phone
-                        </th>
-                        <th className="border-2 border-slate-200 px-4 py-2">
-                          Role
-                        </th>
-                        <th className="border-2 border-slate-200 px-4 py-2">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data?.users ? (
-                        data?.users?.map((item: IUsers) => (
-                          <tr
-                            key={item?._id}
-                            className="hover:bg-gray-50 transition-all duration-300"
-                          >
-                            <td className="border-2 border-slate-200 px-4 py-2">
-                              {item?.fullName}
-                            </td>
-                            <td
-                              className={cn(
-                                "border-2 border-slate-200 px-4 py-2"
-                              )}
-                            >
-                              {item?.email}
-                            </td>
-                            <td className="border-2 border-slate-200 px-4 py-2">
-                              {item?.phone}
-                            </td>
-                            <td className="border-2 border-slate-200 px-4 py-2">
-                              {item?.role}
-                            </td>
-                            <td className="border-2 border-slate-200 px-4 py-2">
-                              <div className="max-w-[300px] w-full">
-                                <Select
-                                  onValueChange={(value) =>
-                                    handleChangeRole(value, item?._id)
-                                  }
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Update User Role" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="user">User</SelectItem>
-                                    <SelectItem value="admin">Admin</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <div className=""></div>
-                      )}
-                    </tbody>
-                  </table>
-                  <div className="flex items-center gap-6">
-                    <p className="text-sm">Total Users: {data?.userLength}</p>
-                  </div>
-                </>
-              )}
-            </>
-          )}
+    <Card className="w-full py-2">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Users Management</CardTitle>
+            <CardDescription>
+              Total Users: {data?.userLength || 0}
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search users..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <SlidersHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[200px]">
+                <DropdownMenuLabel>Filter by Role</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setRoleFilter(null)}>
+                  All Roles
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setRoleFilter("user")}>
+                  Users
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setRoleFilter("admin")}>
+                  Admins
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-      </div>
-    </div>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <ComponentLoader />
+        ) : (
+          <>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("fullName")}
+                    >
+                      Name{" "}
+                      {sortConfig.key === "fullName" && (
+                        <ChevronDown className="inline h-4 w-4" />
+                      )}
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("email")}
+                    >
+                      Email{" "}
+                      {sortConfig.key === "email" && (
+                        <ChevronDown className="inline h-4 w-4" />
+                      )}
+                    </TableHead>
+                    <TableHead>Phone</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {currentUsers.map((user) => (
+                    <TableRow key={user._id}>
+                      <TableCell className="font-medium">
+                        {user.fullName}
+                      </TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>{user.phone}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            user.role === "admin" ? "default" : "secondary"
+                          }
+                        >
+                          {user.role}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          onValueChange={(value) =>
+                            handleChangeRole(value, user._id)
+                          }
+                        >
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Update Role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="user">User</SelectItem>
+                            <SelectItem value="admin">Admin</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* Pagination */}
+            <div className="flex items-center justify-between py-4">
+              <div className="text-sm text-muted-foreground">
+                Showing {firstItemIndex + 1} to{" "}
+                {Math.min(lastItemIndex, filteredUsers.length)} of{" "}
+                {filteredUsers.length} entries
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setCurrentPage(1)}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronsLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <div className="text-sm font-medium">
+                  Page {currentPage} of {totalPages}
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={currentPage === totalPages}
+                >
+                  <ChevronsRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
-export default Users;
+export default UsersTable;

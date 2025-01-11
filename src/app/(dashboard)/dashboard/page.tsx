@@ -4,7 +4,7 @@ import SalesChart from "../components/SalesChart";
 
 const page = () => {
   return (
-    <div className="ml-[230px] mt-[70px] p-4">
+    <div className="">
       <div className="space-y-4">
         <h1 className="font-semibold text-2xl ">Total Revenue</h1>
         <SalesChart />

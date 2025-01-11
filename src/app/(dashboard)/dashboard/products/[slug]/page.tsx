@@ -11,8 +11,7 @@ const page = async ({ params }: Props) => {
   const product = await singleProduct(slug);
 
   return (
-    <div className="ml-[230px] mt-[70px] p-4">
-      <h1>Update Products</h1>
+    <div className="p-1 md:p-2 xl:p-4">
       <Card>
         <CardContent>
           <UpdateProductInfo product={product?.product} />
